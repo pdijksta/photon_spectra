@@ -187,6 +187,8 @@ class SpectrumDataset:
         self.number_of_peaks = np.zeros(self.spectrum_number)
         self.FWHM = np.zeros(self.spectrum_number)
         self.tmin = np.zeros(self.spectrum_number)
+        self.fit_functions = np.zeros([self.spectrum_number, len(self.photE)])
+        self.filtered_spectra = self.fit_functions.copy()
         self.examples = []
 
         #feedbackloop
@@ -246,6 +248,8 @@ class SpectrumDataset:
                         self.number_of_peaks[i] = spectra.n
                         self.FWHM[i] = spectra.FWHM
                         self.tmin[i] = spectra.tmin
+                        self.fit_functions[i] = spectra.total_fit
+                        self.filtered_spectra[i] = spectra.shiftraw
 
                         if count1 <= 1:
                             self.examples.append(spectra.shiftraw)
@@ -314,6 +318,8 @@ class SpectrumDataset:
         self.number_of_peaks = np.zeros(self.spectrum_number)
         self.FWHM = np.zeros(self.spectrum_number)
         self.tmin = np.zeros(self.spectrum_number)
+        self.fit_functions = np.zeros([self.spectrum_number, len(self.photE)])
+        self.filtered_spectra = self.fit_functions.copy()
 
         #readout analysed data
         for num, spectra in zip(np.arange(0, self.spectrum_number)[self.noisebool], result):
@@ -327,6 +333,8 @@ class SpectrumDataset:
                     self.number_of_peaks[spectra.spectrum_label] = spectra.n
                     self.FWHM[spectra.spectrum_label] = spectra.FWHM
                     self.tmin[spectra.spectrum_label] = spectra.tmin
+                    self.fit_functions[spectra.spectrum_label] = spectra.total_fit
+                    self.filtered_spectra[spectra.spectrum_label] = spectra.shiftraw
 
                     if count1 <= 1:
                         self.examples.append(spectra.shiftraw)

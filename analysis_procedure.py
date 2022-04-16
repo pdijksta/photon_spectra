@@ -79,6 +79,10 @@ class AnalysisProcedure(QObject):
         results_dict['number_of_spectra'] = self.dataset.spectrum_number
         results_dict['average_spectrum_width'] = self.dataset.bandwidth
         results_dict['average_photon_energy'] = [self.dataset.average_photon_energy, self.dataset.std_photon_energy]
+        results_dict['raw_data_energy'] = self.dataset.photE
+        results_dict['raw_data_intensity'] = self.dataset.intense
+        results_dict['fit_functions'] = self.dataset.fit_functions
+        results_dict['filtered_spectra'] = self.dataset.filtered_spectra
 
         if self.dataset.tmin_avg is not None:
             results_dict['average_spike_width'] = [self.dataset.overall_average_FWHM, self.dataset.FWHM_std]
