@@ -57,6 +57,7 @@ class AnalysisProcedure(QObject):
         self.dataset = GUISpectrumDataset(self, input_parameters, self.parallel)
 
         if not self.dataset.open_dataset():
+            print('Cannot open dataset')
             return
 
         self.dataset.get_general_information()

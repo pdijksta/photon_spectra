@@ -76,25 +76,31 @@ class SpectrumDataset:
                 self.expool = False
 
     def open_dataset(self, photEcutoff=None):
-
         try:
-            self.f = h5py.File(self.datasetname, 'r')
-        except:
+            with h5py.File(self.datasetname, 'r') as f:
+                status = self.open_dataset2(f, photEcutoff)
+
+            self.intense = np.unique(self.intense, axis=0)
+            return status
+        except Exception as e:
+            print(e)
             self.send_message('Wrong file format', f'The file {os.path.basename(self.datasetname)} could not be opened as an h5 file.')
             return False
 
-        if 'y-axis' in self.f.keys() and 'x-axis' in self.f.keys():
-            self.intense = self.f['y-axis']
-            self.photE = np.array(self.f["x-axis"])
-        elif 'SARFE10-PSSS059:SPECTRUM_X' in self.f.keys() and 'SARFE10-PSSS059:SPECTRUM_Y' in self.f.keys():
-            self.photE = np.array(self.f['SARFE10-PSSS059:SPECTRUM_X']['data'][0])
-            self.intense = self.f['SARFE10-PSSS059:SPECTRUM_Y']['data']
-        elif 'scan 1/data/SARFE10-PSSS059/SPECTRUM_Y' in self.f and 'scan 1/data/SARFE10-PSSS059/SPECTRUM_X' in self.f:
-            #self.photE = np.array(self.f['scan 1/data/SARFE10-PSSS059/SPECTRUM_X'][0, 0,:2560])
-            #self.intense = self.f['scan 1/data/SARFE10-PSSS059/SPECTRUM_Y'][:,0,:2560]
+    def open_dataset2(self, f, photEcutoff):
 
-            xx = np.array(self.f['scan 1/data/SARFE10-PSSS059/SPECTRUM_X'])
-            yy = np.array(self.f['scan 1/data/SARFE10-PSSS059/SPECTRUM_Y'])
+        if 'y-axis' in f.keys() and 'x-axis' in f.keys():
+            self.intense = f['y-axis']
+            self.photE = np.array(f["x-axis"])
+        elif 'SARFE10-PSSS059:SPECTRUM_X' in f.keys() and 'SARFE10-PSSS059:SPECTRUM_Y' in f.keys():
+            self.photE = np.array(f['SARFE10-PSSS059:SPECTRUM_X']['data'][0])
+            self.intense = f['SARFE10-PSSS059:SPECTRUM_Y']['data']
+        elif 'scan 1/data/SARFE10-PSSS059/SPECTRUM_Y' in f and 'scan 1/data/SARFE10-PSSS059/SPECTRUM_X' in f:
+            #self.photE = np.array(f['scan 1/data/SARFE10-PSSS059/SPECTRUM_X'][0, 0,:2560])
+            #self.intense = f['scan 1/data/SARFE10-PSSS059/SPECTRUM_Y'][:,0,:2560]
+
+            xx = np.array(f['scan 1/data/SARFE10-PSSS059/SPECTRUM_X'])
+            yy = np.array(f['scan 1/data/SARFE10-PSSS059/SPECTRUM_Y'])
             shape = xx.shape
             xx1 = xx.reshape([shape[0]*shape[1], shape[2]])
             yy1 = yy.reshape([shape[0]*shape[1], shape[2]])
@@ -624,6 +630,7 @@ class SpectrumDataset:
 
     def send_message(self, title, message):
         #override for implementation in GUI
+        print(title, message)
         pass
 
 def gaussian_central_offset(x, amplitude, sigma, offset):
@@ -644,4 +651,6 @@ class GUISpectrumDataset(SpectrumDataset):
     def send_message(self, title, message):
         if self.parent.parent is not None:
             self.parent.parent.trigger_analysis_message.emit(title, message)
+        else:
+            print(title, message)
 
