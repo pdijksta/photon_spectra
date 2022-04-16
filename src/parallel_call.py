@@ -1,5 +1,5 @@
 import time
-from src.single_spectra import single_spectra
+from .single_spectra import single_spectra
 from numpy import array
 
 def analyse_single_spectra(i, params, intense, photE, fact):

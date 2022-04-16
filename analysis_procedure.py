@@ -1,14 +1,11 @@
 import inspect
 import os
-import sys
-import time
 import numpy as np
-import multiprocessing as mp
 from uncertainties import unumpy
 
-from qtpy.QtCore import PYQT_VERSION_STR, QObject, Signal
+from qtpy.QtCore import QObject, Signal
 
-from src.spectrum_dataset import GUISpectrumDataset
+from .src.spectrum_dataset import GUISpectrumDataset
 _pymodule = os.path.basename(__file__)
 
 #Special values for progress_update Signal
@@ -22,7 +19,7 @@ def __LINE__():
     The current line number within the file is used when
     reporting messages to the message logging window.
 
-    Returns: 
+    Returns:
         int: Current line number.
     """
     return inspect.currentframe().f_back.f_lineno
@@ -31,15 +28,15 @@ def __LINE__():
 class AnalysisProcedure(QObject):
     trigger_abort = Signal()
     trigger_analysis_message = Signal(str, str)
-    
+
     def __init__(self, parent=None):
         super(AnalysisProcedure, self).__init__(parent)
-        self.parent = parent    
+        self.parent = parent
         self.abort = False
         self.trigger_abort.connect(self.abort_update)
         self.dataset = None
         self.parallel = True
-        
+
     def __del__(self):
         if self.pool is not None:
             self.pool.terminate()
@@ -50,29 +47,31 @@ class AnalysisProcedure(QObject):
 
 
     def PerformMeas(self, input_parameters={}):
-        
+
         print(input_parameters)
 
-        self.parent.trigger_progressbar.emit(_PROGRESS_BAR_THREAD_START)
-        
+        if self.parent is not None:
+            self.parent.trigger_progressbar.emit(_PROGRESS_BAR_THREAD_START)
+
         self.dataset = GUISpectrumDataset(self, input_parameters, self.parallel)
-        
+
         if not self.dataset.open_dataset():
             return
-        
+
         self.dataset.get_general_information()
-        
+
         if input_parameters['spike-width']:
             if not self.dataset.analyse():
                 return
-            
+
         if input_parameters['auto-correlation']:
             self.dataset.second_order_correlation()
-        
+
         if self.abort:
             self.abort = False
             return
-        self.parent.trigger_progressbar.emit(_PROGRESS_BAR_THREAD_END)
+        if self.parent is not None:
+            self.parent.trigger_progressbar.emit(_PROGRESS_BAR_THREAD_END)
 
         print(self.dataset.tauto)
         results_dict = {}
@@ -94,18 +93,18 @@ class AnalysisProcedure(QObject):
             results_dict['spike_widths'] = [np.zeros(5), np.zeros(5)]
             results_dict['average_spike_number'] = 0
             results_dict['peak_histogram'] = np.zeros(5)
-        
+
         if self.dataset.noisy_spectra is None:
             results_dict['noisy_spectra'] = 0
         else:
             results_dict['noisy_spectra'] = self.dataset.noisy_spectra
-            
+
         results_dict['pulse_energy'] = self.dataset.average_energy
         results_dict['relative_energy'] = self.dataset.all_energy
         results_dict['intensity_fluctuations'] = self.dataset.intensity_fluctuations
         results_dict['average_spectrum'] = [self.dataset.average_spectra, self.dataset.fit.gausscurve]
         results_dict['photon_energy'] = self.dataset.photE
-        
+
         if self.dataset.tauto is not None:
             print(unumpy.nominal_values(self.dataset.tauto), unumpy.nominal_values(self.dataset.resolution))
             results_dict['tauto'] = unumpy.nominal_values(self.dataset.tauto)
@@ -119,11 +118,11 @@ class AnalysisProcedure(QObject):
         results_dict['Figure3'] = self.dataset.get_average_figure()
         results_dict['Figure4'] = self.dataset.get_histogram()
         results_dict['Figure5'] = self.dataset.get_auto_correlation_plot()
-        
+
         results_dict['examples'] = self.dataset.examples
         results_dict['number_of_peaks'] = self.dataset.number_of_peaks
         return results_dict
-    
+
     def GetFigures(self):
         figures = self.dataset.get_figure_list()
         self.dataset = None

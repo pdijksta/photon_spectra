@@ -1,4 +1,5 @@
-from numpy import array, std, zeros_like, zeros, logical_and, empty, where, ones, all, linspace
+import numpy as np
+from numpy import array, std, zeros_like, zeros, logical_and, empty, where, all
 from numpy import sum as npsum
 from numpy import max as npmax
 from numpy import min as npmin
@@ -6,44 +7,44 @@ from numpy import sqrt as npsqrt
 from numpy import average as npaverage
 import time
 from scipy.signal import find_peaks, butter, filtfilt
-from src.slices import Slice
+from .slices import Slice
 
 from matplotlib.figure import Figure
 
 class single_spectra:
-    def __init__(self, intensity, photE, fact ,i):
+    def __init__(self, intensity, photE, fact, i):
         self.spectrum_label = i
         self.intensity = intensity
         self.indivtime = zeros(4)
         self.photE = photE
         self.fact = fact
-        
+
         #Lowpassfilter
         self.deg = 5
         self.spec = None
-        self.shiftraw = None 
+        self.shiftraw = None
         self.filtered_intensity = None
         self.r2filter = None
         self.max_intensity = None
         self.noise = None
         self.noise_mag = None
         self.background = None
-        self.noisybool = None 
-        
+        self.noisybool = None
+
         #Peakfinder and fit
-        self.xpeaks = None 
+        self.xpeaks = None
         self.ypeaks = None
-        self.oldpeaks = None 
+        self.oldpeaks = None
         self.n = None
-        
+
         self.minima_indices = None
-        self.minima = None 
-        self.leftcutoff = None 
+        self.minima = None
+        self.leftcutoff = None
         self.rightcutoff = None
         self.Slices = None
-        
-        self.average_sigma = None 
-        self.total_amplitude = None 
+
+        self.average_sigma = None
+        self.total_amplitude = None
         self.total_fit = None
         self.FWHM = None
         self.tmin = None
@@ -53,7 +54,7 @@ class single_spectra:
         tlowstart = time.time()
         lpcutoffinit = lowpasscutoff*1.0
         lpcutoff = lowpasscutoff*1.0
-        rd = 1000000000000000000000000000000
+        rd = np.inf
         switched = False
         while True:
 
@@ -101,13 +102,13 @@ class single_spectra:
 
 
         self.noisybool = False
-            
+
         if self.noise_mag > snr*self.max_intensity or self.background > sbr*self.max_intensity:
             self.noisybool = True
 
-        tlowend = time.time() 
+        tlowend = time.time()
         self.indivtime[0] = tlowend - tlowstart
-        
+
         return lpcutoff
 
     def findbestalpha(self, alphas, params):
@@ -155,38 +156,38 @@ class single_spectra:
         self.lpcutoff = lpcutoffs
 
         return False, lpcutoffs, self.alpha, self.weight
-        
+
     def finding_peak(self, prominence, absheight, bgprominence):
         tpeakstart = time.time()
-        
+
         if self.xpeaks is not None:
             self.oldpeaks = self.xpeaks*1
         minheight = max(absheight*npmax(self.filtered_intensity)/100, bgprominence*self.background)
         #print(minheight, prominence, print(npmax(self.filtered_intensity)))
         #print(find_peaks(self.filtered_intensity, height=minheight, prominence=prominence*self.max_intensity/100))
         self.xpeaks = find_peaks(self.filtered_intensity, height=minheight, prominence=prominence*self.max_intensity/100)[0]
-        
+
         self.n = len(self.xpeaks)
         self.filterpeak()
         self.ypeaks = self.filtered_intensity[self.xpeaks]
 
         tpeakend = time.time()
         self.indivtime[1] = tpeakend - tpeakstart
-    
+
     def filterpeak(self):
         A = logical_and(self.xpeaks > len(self.photE)/25, self.xpeaks < len(self.photE)*(1-1/25))
         self.xpeaks = self.xpeaks[A]
         self.n = len(self.xpeaks)
-    
+
     def first_estimate(self,cutoff_prom, cutoff_height, globalminima=False):
         tslicestart = time.time()
-        
+
         self.total_fit = zeros_like(self.filtered_intensity)
         self.minima_indices = empty(self.n+1, dtype=int)
         self.Slices = [1]*self.n
         self.average_sigma = 0
         self.total_amplitude = 0
-        
+
         if self.n > 0:
             self.getnumber = True
             peak1 = 0
@@ -301,16 +302,16 @@ class single_spectra:
         self.FWHM = array(2.355 * average)
 
     def get_lowpass_signal_plot(self):
-        
+
         fig = Figure()
         axes = fig.add_subplot(111)
         self.plot_lowpass_signal(axes)
         fig.set_tight_layout(True)
 
         return fig
-    
+
     def plot_lowpass_signal(self, axes):
-        
+
         axes.clear()
         axes.plot(self.photE, self.shiftraw, c='black')
         axes.plot(self.photE,self.filtered_intensity, c='orange')
@@ -318,12 +319,12 @@ class single_spectra:
         axes.set_xlabel('photon energy [eV]')
         axes.set_ylabel('intensity')
         axes.set_title('spectrum ' + str(self.spectrum_label))
-        axes.grid(True)    
-            
+        axes.grid(True)
+
     def get_peak_plot(self):
         fig = Figure()
         axes = fig.add_subplot(111)
-            
+
         axes.plot(self.photE, self.shiftraw, c='black')
         axes.plot(self.photE, self.filtered_intensity, c='orange')
         allpeaks = find_peaks(self.filtered_intensity)[0]
@@ -332,15 +333,15 @@ class single_spectra:
         axes.scatter(self.photE[allpeaks], allypeaks, c='red', marker='x', zorder=5)
         axes.scatter(self.photE[self.xpeaks], self.ypeaks, c='green', marker='x', zorder=5, s=80)
         axes.set_xlabel('photon energy [eV]')
-        axes,set_ylabel('intensity')
+        axes.set_ylabel('intensity')
         axes.set_title('spectrum ' + str(self.spectrum_label))
         axes.grid(True)
         fig.set_tight_layout(True)
 
         return fig
-    
+
     def plot_gaussian(self, axes):
-        
+
         axes.clear()
         axes.plot(self.photE, self.shiftraw, color='black')
         axes.plot(self.photE, self.total_fit, color='red')
@@ -348,9 +349,9 @@ class single_spectra:
         axes.set_xlabel('photon energy [eV]')
         axes.set_ylabel('intensity')
         axes.grid(True)
-        
+
     def get_gaussian_plot(self):
-        
+
         fig = Figure()
         axes = fig.add_subplot(111)
         self.plot_gaussian(axes)
