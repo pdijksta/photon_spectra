@@ -1,0 +1,25 @@
+{
+    "menuFlags":{
+        "hasFile": 1,
+        "loadInitFile": 0,
+        "hasDaq":  1,
+        "hasH5":   1
+    },
+    "Elog":{
+        "useELOGenv": 0,
+        "host": "elog-gfa.psi.ch",
+	"book": "SwissFEL+test+data",
+	"url": "https://elog-gfa.psi.ch:443/SwissFEL+test+data",
+	"destination": "/afs/psi.ch/intranet/Controls/tmp/bdbase/ePic/"
+    },
+    "stdlog":{
+        "destination": "/afs/psi.ch/intranet/Controls/tmp/bdbase/stdlog/"
+    },
+    "Update":{
+        "freq": [0.5, 1, 2, 5, 10],
+	"defaultIdx": 1
+    },
+    "bsread":{
+        "PV":[ "SARFE10-PSSS059:SPECTRUM_X", "SARFE10-PSSS059:SPECTRUM_Y"]	      
+    }
+}
