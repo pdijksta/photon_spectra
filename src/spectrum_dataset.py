@@ -392,8 +392,9 @@ class SpectrumDataset:
             self.tmin_std = np.std(self.tmin[np.where(self.tmin != 0)[0]])
 
             if self.params['pulse duration correction']:
-                with h5py.File('src/correction_coefficient.h5', 'r') as f:
+                with h5py.File(os.path.dirname(__file__)+'/correction_coefficient.h5', 'r') as f:
                     fact = rational(self.average_peak_number, *np.array(f['coef']))
+                    print('Correction factor', fact)
                     self.tmin_avg /= fact
                     self.tmin_std /= fact
 
