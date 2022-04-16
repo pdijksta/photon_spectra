@@ -8,9 +8,6 @@ from uncertainties import unumpy
 
 from qtpy.QtCore import PYQT_VERSION_STR, QObject, Signal
 
-from bdbase.enumkind import MsgSeverity
-from bdbase.utilities import check_version
-
 from src.spectrum_dataset import GUISpectrumDataset
 _pymodule = os.path.basename(__file__)
 
