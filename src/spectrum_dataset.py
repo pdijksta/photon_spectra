@@ -90,8 +90,18 @@ class SpectrumDataset:
             self.photE = np.array(self.f['SARFE10-PSSS059:SPECTRUM_X']['data'][0])
             self.intense = self.f['SARFE10-PSSS059:SPECTRUM_Y']['data']
         elif 'scan 1/data/SARFE10-PSSS059/SPECTRUM_Y' in self.f and 'scan 1/data/SARFE10-PSSS059/SPECTRUM_X' in self.f:
-            self.photE = np.array(self.f['scan 1/data/SARFE10-PSSS059/SPECTRUM_X'][0, 0,:2560])
-            self.intense = self.f['scan 1/data/SARFE10-PSSS059/SPECTRUM_Y'][:,0,:2560]
+            #self.photE = np.array(self.f['scan 1/data/SARFE10-PSSS059/SPECTRUM_X'][0, 0,:2560])
+            #self.intense = self.f['scan 1/data/SARFE10-PSSS059/SPECTRUM_Y'][:,0,:2560]
+
+            xx = np.array(self.f['scan 1/data/SARFE10-PSSS059/SPECTRUM_X'])
+            yy = np.array(self.f['scan 1/data/SARFE10-PSSS059/SPECTRUM_Y'])
+            shape = xx.shape
+            xx1 = xx.reshape([shape[0]*shape[1], shape[2]])
+            yy1 = yy.reshape([shape[0]*shape[1], shape[2]])
+            mask0 = xx1[0] != 0
+            self.photE = xx1[:,mask0][0]
+            self.intense = yy1[:,mask0]
+
         elif 'energy' in self.f.keys() and 'powerE' in self.f.keys():
             if photEcutoff is not None:
                 self.photE = np.array(self.f['energy'][0][photEcutoff:-photEcutoff])
@@ -623,5 +633,6 @@ class GUISpectrumDataset(SpectrumDataset):
         return self.parent.abort
 
     def send_message(self, title, message):
-        self.parent.parent.trigger_analysis_message.emit(title, message)
+        if self.parent.parent is not None:
+            self.parent.parent.trigger_analysis_message.emit(title, message)
 
