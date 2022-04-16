@@ -618,7 +618,8 @@ class GUISpectrumDataset(SpectrumDataset):
 
     def send_progress(self, percent):
         if percent > 10:
-            self.parent.parent.trigger_progressbar.emit(int(percent))
+            if self.parent.parent is not None:
+                self.parent.parent.trigger_progressbar.emit(int(percent))
         return self.parent.abort
 
     def send_message(self, title, message):

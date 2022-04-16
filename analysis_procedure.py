@@ -36,6 +36,7 @@ class AnalysisProcedure(QObject):
         self.trigger_abort.connect(self.abort_update)
         self.dataset = None
         self.parallel = True
+        self.pool = None
 
     def __del__(self):
         if self.pool is not None:
