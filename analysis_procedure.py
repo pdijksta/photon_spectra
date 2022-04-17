@@ -84,6 +84,7 @@ class AnalysisProcedure(QObject):
         results_dict['raw_data_intensity'] = self.dataset.intense
         results_dict['fit_functions'] = self.dataset.fit_functions
         results_dict['filtered_spectra'] = self.dataset.filtered_spectra
+        results_dict['tmin'] = self.dataset.tmin
 
         if self.dataset.tmin_avg is not None:
             results_dict['average_spike_width'] = [self.dataset.overall_average_FWHM, self.dataset.FWHM_std]
