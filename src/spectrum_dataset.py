@@ -76,6 +76,13 @@ class SpectrumDataset:
                 self.expool = False
 
     def open_dataset(self, photEcutoff=None):
+        if self.datasetname.endswith('.npz'):
+            if photEcutoff is not None:
+                raise ValueError('Parameter photEcutoff not supported!')
+            data = np.load(self.datasetname)
+            self.photE = data['e_axis']
+            self.intense = (data['map']).T
+            return True
         try:
             with h5py.File(self.datasetname, 'r') as f:
                 status = self.open_dataset2(f, photEcutoff)

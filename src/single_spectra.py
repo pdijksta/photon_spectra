@@ -85,10 +85,24 @@ class single_spectra:
                 else:
                     lpcutoff += 0.001
 
+        #if np.any(self.spec):
+        #    print('Filtered data contains something')
+        #    #import pdb; pdb.set_trace()
+        #else:
+        #    print('Filtered data contains nothing')
+
+
+
+
 
         self.r2filter = rd
         self.filtered_intensity = self.spec -npmin(self.spec)
         self.shiftraw = self.intensity - npmin(self.spec)
+
+        #if np.any(self.shiftraw):
+        #    print('shiftraw contains something')
+        #else:
+        #    print('shiftraw contains nothing')
 
         self.average_intensity = npaverage(self.shiftraw)
 
@@ -105,6 +119,7 @@ class single_spectra:
 
         if self.noise_mag > snr*self.max_intensity or self.background > sbr*self.max_intensity:
             self.noisybool = True
+
 
         tlowend = time.time()
         self.indivtime[0] = tlowend - tlowstart
