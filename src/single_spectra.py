@@ -96,8 +96,9 @@ class single_spectra:
 
 
         self.r2filter = rd
-        self.filtered_intensity = self.spec -npmin(self.spec)
-        self.shiftraw = self.intensity - npmin(self.spec)
+        delta = np.quantile(self.spec, 0.2)
+        self.filtered_intensity = self.spec - delta
+        self.shiftraw = self.intensity - delta
 
         #if np.any(self.shiftraw):
         #    print('shiftraw contains something')
@@ -113,7 +114,6 @@ class single_spectra:
         A = (self.shiftraw < npmax(self.shiftraw)*0.2)
         self.noise_mag = std(self.noise[A])
         self.background = 0.5*(npaverage(self.shiftraw[:10]) + npaverage(self.shiftraw[-10:]))
-
 
         self.noisybool = False
 
