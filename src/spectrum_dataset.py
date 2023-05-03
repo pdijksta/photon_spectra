@@ -79,21 +79,24 @@ class SpectrumDataset:
         if self.datasetname.endswith('.npz'):
             if photEcutoff is not None:
                 raise ValueError('Parameter photEcutoff not supported!')
-            data = np.load(self.datasetname)
-            self.photE = data['e_axis']
-            self.intense = (data['map']).T
-            self.intense = np.unique(self.intense, axis=0)
-            return True
-        try:
-            with h5py.File(self.datasetname, 'r') as f:
-                status = self.open_dataset2(f, photEcutoff)
+            status = self.open_dataset3(self.datasetname)
+        elif self.datasetname.endswith('.h5') or self.datasetname.endswith('.hdf5'):
+            try:
+                with h5py.File(self.datasetname, 'r') as f:
+                    status = self.open_dataset2(f, photEcutoff)
 
-            self.intense = np.unique(self.intense, axis=0)
-            return status
-        except Exception as e:
-            print(e)
-            self.send_message('Wrong file format', f'The file {os.path.basename(self.datasetname)} could not be opened as an h5 file.')
-            return False
+            except Exception as e:
+                print(e)
+                self.send_message('Wrong file format', f'The file {os.path.basename(self.datasetname)} could not be opened as an h5 file.')
+                return False
+        self.intense = np.unique(self.intense, axis=0)
+        return status
+
+    def open_dataset3(self, datasetname):
+        data = np.load(self.datasetname)
+        self.photE = data['e_axis']
+        self.intense = (data['map']).T
+        return True
 
     def open_dataset2(self, f, photEcutoff):
 
@@ -182,11 +185,11 @@ class SpectrumDataset:
         self.bandwidth = self.fit.sigma*2.355/self.fact
 
         #sort out spectra with integrated intensity below treshold
-        self.noisebool = (self.all_energy > self.params['intensity_thresh'] * self.average_energy)
-        #import pdb; pdb.set_trace()
+        self.noisebool = (self.all_energy > self.params['intensity_thresh'] * self.all_energy.max())
 
         self.spectralist = self.spectrum_number*[1]
 
+        #import pdb; pdb.set_trace()
         return True
 
     def analyse(self):

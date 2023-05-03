@@ -47,7 +47,7 @@ class AnalysisProcedure(QObject):
         self.abort = True
 
 
-    def PerformMeas(self, input_parameters={}):
+    def PerformMeas(self, input_parameters):
 
         print(input_parameters)
 
@@ -76,7 +76,7 @@ class AnalysisProcedure(QObject):
             self.parent.trigger_progressbar.emit(_PROGRESS_BAR_THREAD_END)
 
         print(self.dataset.tauto)
-        results_dict = {}
+        results_dict = {'input_parameters': input_parameters}
         results_dict['number_of_spectra'] = self.dataset.spectrum_number
         results_dict['average_spectrum_width'] = self.dataset.bandwidth
         results_dict['average_photon_energy'] = [self.dataset.average_photon_energy, self.dataset.std_photon_energy]
