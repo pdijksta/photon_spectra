@@ -96,9 +96,9 @@ class single_spectra:
 
 
         self.r2filter = rd
-        delta = np.quantile(self.spec, 0.2)
-        self.filtered_intensity = self.spec - delta
-        self.shiftraw = self.intensity - delta
+        self.delta = np.quantile(self.spec, 0.2)
+        self.filtered_intensity = self.spec - self.delta
+        self.shiftraw = self.intensity - self.delta
 
         #if np.any(self.shiftraw):
         #    print('shiftraw contains something')
@@ -194,7 +194,7 @@ class single_spectra:
         self.xpeaks = self.xpeaks[A]
         self.n = len(self.xpeaks)
 
-    def first_estimate(self,cutoff_prom, cutoff_height, globalminima=False):
+    def first_estimate(self, cutoff_prom, cutoff_height, globalminima=False):
         tslicestart = time.time()
 
         self.total_fit = zeros_like(self.filtered_intensity)

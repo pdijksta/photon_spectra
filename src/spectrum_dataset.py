@@ -82,6 +82,7 @@ class SpectrumDataset:
             data = np.load(self.datasetname)
             self.photE = data['e_axis']
             self.intense = (data['map']).T
+            self.intense = np.unique(self.intense, axis=0)
             return True
         try:
             with h5py.File(self.datasetname, 'r') as f:
@@ -150,8 +151,8 @@ class SpectrumDataset:
             self.fact = len(self.photE) / (np.max(self.photE) - np.min(self.photE))
 
         #integrated intensity and intensity fluctuations
-        minimas = np.min(self.intense, axis=1)
-        self.all_energy = np.sum(self.intense, axis=1)/self.fact - minimas/self.fact*self.windowlength
+        minimas = np.quantile(self.intense, 0.2, axis=1)
+        self.all_energy = np.sum(self.intense-minimas[:,np.newaxis], axis=1)/self.fact
         self.average_energy = np.average(self.all_energy)
         self.intensity_fluctuations = np.std(self.all_energy)/self.average_energy
 
@@ -182,6 +183,7 @@ class SpectrumDataset:
 
         #sort out spectra with integrated intensity below treshold
         self.noisebool = (self.all_energy > self.params['intensity_thresh'] * self.average_energy)
+        #import pdb; pdb.set_trace()
 
         self.spectralist = self.spectrum_number*[1]
 
