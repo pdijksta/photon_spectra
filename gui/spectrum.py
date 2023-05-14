@@ -1,4 +1,4 @@
-import analysis_procedure
+from photon_spectra import analysis_procedure
 
 def get_input_parameters():
     return {

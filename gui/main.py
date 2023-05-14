@@ -5,6 +5,8 @@ import PyQt5
 from PyQt5 import QtCore, QtGui
 from PyQt5.QtWidgets import QMainWindow, QApplication
 
+if '../../' not in sys.path:
+    sys.path.append('../../')
 import spectrum
 
 if __name__ == '__main__' and (not os.path.isfile('./gui.py') or os.path.getmtime('./gui.ui') > os.path.getmtime('./gui.py')):
@@ -48,7 +50,10 @@ class Main(QMainWindow):
         if not os.path.isfile(filename):
             raise ValueError('%s does not exist' % filename)
         parameters = self.get_parameters()
+        print('Start analysis')
         spectrum.analyze_spectrum(filename, parameters)
+        print('End analysis')
+
 
     def select_file(self, widget):
         def f():
