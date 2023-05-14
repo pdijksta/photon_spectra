@@ -72,6 +72,7 @@ class Main(QMainWindow):
     def do_plot(self):
         result = self.result_dict
         fig, sps = plt.subplots(nrows=3, ncols=3, figsize=(12,10))
+        fig.subplots_adjust(hspace=0.5, wspace=0.5)
         sps = sps.ravel()
         plt.suptitle(os.path.basename(self.filename))
 

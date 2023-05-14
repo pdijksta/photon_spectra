@@ -129,12 +129,12 @@
      <rect>
       <x>420</x>
       <y>40</y>
-      <width>231</width>
+      <width>371</width>
       <height>21</height>
      </rect>
     </property>
     <property name="text">
-     <string>Minimum peak height</string>
+     <string>Minimum peak height relative to max. data in that spectrum</string>
     </property>
    </widget>
    <widget class="QLabel" name="label_6">
