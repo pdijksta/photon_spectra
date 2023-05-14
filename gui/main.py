@@ -1,5 +1,6 @@
 import os
 import sys
+import socket
 import time
 
 import numpy as np
@@ -50,6 +51,9 @@ class Main(QMainWindow):
         self.ui.SelectFile.clicked.connect(self.select_file(self.ui.Filename))
         self.ui.DoAnalysis.clicked.connect(self.do_analysis)
 
+        if 'xfelbkr' in socket.gethostname():
+            self.ui.Filename.setText('/Users/xfeloper/user/pySpectrometer/SASE2/20230413-19_10_59_waterflow.npz')
+
     def do_analysis(self):
         self.filename = filename = self.ui.Filename.text().strip()
         if not os.path.isfile(filename):
@@ -93,7 +97,7 @@ class Main(QMainWindow):
 
         for n_spectrum in range(8):
             sp = sps[n_spectrum+1]
-            sp.set_title('Example %i with %i spikes' % (n_spectrum, n_spikes[n_spectrum]))
+            sp.set_title('Spectrum %i with %i spikes' % (n_spectrum, n_spikes[n_spectrum]))
             sp.set_xlabel('E (eV)')
             sp.set_ylabel('Intensity (arb. units')
 

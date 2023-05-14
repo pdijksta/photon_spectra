@@ -212,7 +212,7 @@
      </rect>
     </property>
     <property name="text">
-     <string>For lowpass filter. Do not change this number.</string>
+     <string>For lowpass filter. Do not change this number</string>
     </property>
    </widget>
    <widget class="QLabel" name="label_12">
@@ -225,7 +225,7 @@
      </rect>
     </property>
     <property name="text">
-     <string>For lowpass filter. Unknown interpretation.</string>
+     <string>For lowpass filter. Unknown interpretation</string>
     </property>
    </widget>
    <widget class="QDoubleSpinBox" name="ParFitHeight">
