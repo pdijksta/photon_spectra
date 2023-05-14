@@ -1,5 +1,11 @@
 import os
 import sys
+import time
+
+import numpy as np
+import matplotlib
+matplotlib.use('Qt5Agg')
+import matplotlib.pyplot as plt
 
 import PyQt5
 from PyQt5 import QtCore, QtGui
@@ -8,6 +14,7 @@ from PyQt5.QtWidgets import QMainWindow, QApplication
 if '../../' not in sys.path:
     sys.path.append('../../')
 import spectrum
+from h5_storage import saveH5Recursive
 
 if __name__ == '__main__' and (not os.path.isfile('./gui.py') or os.path.getmtime('./gui.ui') > os.path.getmtime('./gui.py')):
     cmd = 'bash ./ui2py.sh'
@@ -35,8 +42,6 @@ default_input_parameters = {
 
 class Main(QMainWindow):
 
-    data_dir = './data/'
-
     def __init__(self):
         QMainWindow.__init__(self)
         self.ui = Ui_MainWindow()
@@ -46,21 +51,67 @@ class Main(QMainWindow):
         self.ui.DoAnalysis.clicked.connect(self.do_analysis)
 
     def do_analysis(self):
-        filename = self.ui.Filename.text().strip()
+        self.filename = filename = self.ui.Filename.text().strip()
         if not os.path.isfile(filename):
             raise ValueError('%s does not exist' % filename)
         parameters = self.get_parameters()
         print('Start analysis')
-        spectrum.analyze_spectrum(filename, parameters)
-        print('End analysis')
+        time0 = time.time()
+        _, self.result_dict = spectrum.analyze_spectrum(filename, parameters)
+        time1 = time.time()
+        print('End analysis after %.0f s' % (time1-time0))
+        save_filename = './analyzed_data/'+os.path.basename(filename).replace('.npz', '.h5')
+        saveH5Recursive(save_filename, self.result_dict)
+        print('Saved %s' % save_filename)
+        self.do_plot()
 
+    def do_plot(self):
+        result = self.result_dict
+        fig, sps = plt.subplots(nrows=3, ncols=3, figsize=(12,10))
+        sps = sps.ravel()
+        plt.suptitle(os.path.basename(self.filename))
+
+        n_spikes = np.round(result['number_of_peaks']).astype(int)
+        n_spikes_maxxed = np.clip(n_spikes, 0, 10)
+        bar_x, counts = np.unique(n_spikes_maxxed, return_counts=True)
+        ratios = counts/counts.sum()
+
+        sp = sps[0]
+        sp.set_title('Spike count (%i total)' % n_spikes.size)
+        sp.set_xlabel('Number of spikes')
+        sp.set_ylabel('Percentage')
+
+        sp.bar(bar_x, ratios*100)
+        sp.set_xticks(bar_x)
+        xticklabels = ['%i' % x for x in bar_x]
+        xticklabels[-1] = xticklabels[-1]+'+'
+        sp.set_xticklabels(xticklabels)
+
+        data_min = np.mean(np.min(result['raw_data_intensity'],axis=0))
+        data_max = (result['raw_data_intensity'] - data_min).max()
+        fit_max = np.max(result['fit_functions'])
+
+        for n_spectrum in range(8):
+            sp = sps[n_spectrum+1]
+            sp.set_title('Example %i with %i spikes' % (n_spectrum, n_spikes[n_spectrum]))
+            sp.set_xlabel('E (eV)')
+            sp.set_ylabel('Intensity (arb. units')
+
+            _yy = result['raw_data_intensity'][n_spectrum]
+            _yy_fit = result['fit_functions'][n_spectrum]
+            ene = result['raw_data_energy']
+
+            sp.plot(ene, _yy/data_max)
+            sp.plot(ene, _yy_fit/fit_max)
+
+        plt.show(block=False)
 
     def select_file(self, widget):
         def f():
             QFileDialog = PyQt5.QtWidgets.QFileDialog
             options = QFileDialog.Options()
             options |= QFileDialog.DontUseNativeDialog
-            filename, _ = QFileDialog.getOpenFileName(self,"QFileDialog.getOpenFileName()", './', "Npz files (*.npz);;All Files (*)", options=options)
+            filename, _ = QFileDialog.getOpenFileName(self, "QFileDialog.getOpenFileName()", './', "Npz files (*.npz);;All Files (*)", options=options)
             if filename:
                 widget.setText(filename)
         return f

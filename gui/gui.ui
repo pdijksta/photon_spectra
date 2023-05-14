@@ -391,7 +391,7 @@
      <rect>
       <x>10</x>
       <y>510</y>
-      <width>521</width>
+      <width>681</width>
       <height>23</height>
      </rect>
     </property>
@@ -409,15 +409,15 @@
      </rect>
     </property>
     <property name="text">
-     <string>Abs file path (waterfall.npz)</string>
+     <string>Abs file path (waterflow.npz)</string>
     </property>
    </widget>
    <widget class="QPushButton" name="DoAnalysis">
     <property name="geometry">
      <rect>
-      <x>629</x>
+      <x>709</x>
       <y>510</y>
-      <width>161</width>
+      <width>81</width>
       <height>23</height>
      </rect>
     </property>
@@ -483,9 +483,9 @@
    <widget class="QPushButton" name="SelectFile">
     <property name="geometry">
      <rect>
-      <x>370</x>
+      <x>610</x>
       <y>470</y>
-      <width>161</width>
+      <width>81</width>
       <height>23</height>
      </rect>
     </property>
