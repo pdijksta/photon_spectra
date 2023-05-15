@@ -53,6 +53,10 @@ class Main(QMainWindow):
 
         if 'xfelbkr' in socket.gethostname():
             self.ui.Filename.setText('/Users/xfeloper/user/pySpectrometer/SASE2/20230413-19_10_59_waterflow.npz')
+            self.default_path = '/Users/xfeloper/user/pySpectrometer/'
+        else:
+            self.ui.Filename.setText('./test_data/20230413-19_10_59_waterflow.npz')
+            self.default_path = './test_data/'
 
     def do_analysis(self):
         self.filename = filename = self.ui.Filename.text().strip()
@@ -116,7 +120,7 @@ class Main(QMainWindow):
             QFileDialog = PyQt5.QtWidgets.QFileDialog
             options = QFileDialog.Options()
             options |= QFileDialog.DontUseNativeDialog
-            filename, _ = QFileDialog.getOpenFileName(self, "QFileDialog.getOpenFileName()", './', "Npz files (*.npz);;All Files (*)", options=options)
+            filename, _ = QFileDialog.getOpenFileName(self, "QFileDialog.getOpenFileName()", self.default_path, "Npz files (*.npz);;All Files (*)", options=options)
             if filename:
                 widget.setText(filename)
         return f
