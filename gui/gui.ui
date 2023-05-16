@@ -415,8 +415,8 @@
    <widget class="QPushButton" name="DoAnalysis">
     <property name="geometry">
      <rect>
-      <x>709</x>
-      <y>510</y>
+      <x>470</x>
+      <y>470</y>
       <width>81</width>
       <height>23</height>
      </rect>
@@ -483,7 +483,7 @@
    <widget class="QPushButton" name="SelectFile">
     <property name="geometry">
      <rect>
-      <x>610</x>
+      <x>350</x>
       <y>470</y>
       <width>81</width>
       <height>23</height>
@@ -491,6 +491,19 @@
     </property>
     <property name="text">
      <string>Select file</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="DoLogbook">
+    <property name="geometry">
+     <rect>
+      <x>590</x>
+      <y>470</y>
+      <width>81</width>
+      <height>23</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Logbook</string>
     </property>
    </widget>
   </widget>

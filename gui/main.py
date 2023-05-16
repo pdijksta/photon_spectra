@@ -2,7 +2,7 @@ import os
 import sys
 import socket
 import time
-import struct
+import base64
 
 import numpy as np
 import matplotlib
@@ -52,6 +52,7 @@ class Main(QMainWindow):
 
         self.ui.SelectFile.clicked.connect(self.select_file(self.ui.Filename))
         self.ui.DoAnalysis.clicked.connect(self.do_analysis)
+        self.ui.DoLogbook.clicked.connect(self.do_logbook)
 
         if 'xfelbkr' in socket.gethostname():
             self.ui.Filename.setText('/Users/xfeloper/user/pySpectrometer/SASE2/20230413-19_10_59_waterflow.npz')
@@ -127,9 +128,7 @@ class Main(QMainWindow):
         self.fig.savefig(fig_savename)
         comment = parameters_to_text(self.result_dict['input_parameters'])
         with open(fig_savename, 'rb') as f:
-            b = bytearray(f.read())
-        fl = struct.unpack('f', b)
-        image = np.array(fl).decode()
+            image = base64.b64encode(f.read()).decode('ascii')
         logbook.send_to_desy_elog('Spike fitting', 'Dr. Spike', 'INFO', comment, 'xfellog', image)
 
     def select_file(self, widget):
@@ -173,7 +172,7 @@ def parameters_to_text(parameters):
     outp.append('Parameters for the lowpass frequency filter')
     for key, disp in [
             ('roughness', 'Roughness'),
-            ('frequency cutoff', 'Frequency cutoff'),
+            ('frequency_cutoff', 'Frequency cutoff'),
             ]:
         outp.append('%s: %.5f' % (disp, parameters[key]))
     outp.append('Parameters for the peak finding')
