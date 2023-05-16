@@ -175,32 +175,32 @@ def parameters_to_text(parameters):
     outp = [
             'Used parameters',
             '',
-            'Parameters that reject individual spectra',
+            '*Parameters that reject individual spectra',
             ]
     for key, disp in [
             ('snr', 'Max. noise-to-signal ratio'),
             ('sbr', 'Max. background-to-signal ratio'),
             ('intensity_thresh', 'Min. intensity rel. to highest intensity spectrum in dataset'),
             ]:
-        outp.append('*%s: %.5f' % (disp, parameters[key]))
-    outp.append('Parameters for the lowpass frequency filter')
+        outp.append(' *%s: %.5f' % (disp, parameters[key]))
+    outp.append('*Parameters for the lowpass frequency filter')
     for key, disp in [
             ('roughness', 'Roughness'),
             ('frequency_cutoff', 'Frequency cutoff'),
             ]:
-        outp.append('*%s: %.5f' % (disp, parameters[key]))
-    outp.append('Parameters for the peak finding')
+        outp.append(' *%s: %.5f' % (disp, parameters[key]))
+    outp.append('*Parameters for the peak finding')
     for key, disp in [
             ('height', 'Peak min. relative height'),
             ('prominence', 'Peak min. relative prominence'),
             ]:
-        outp.append('*%s: %.5f' % (disp, parameters[key]))
-    outp.append('Parameters for the Gaussian function fitting')
+        outp.append(' *%s: %.5f' % (disp, parameters[key]))
+    outp.append('*Parameters for the Gaussian function fitting')
     for key, disp in [
             ('cutoff_height', 'Fit peak min. relative height'),
             ('cutoff_prominence', 'Fit peak min. relative prominence'),
             ]:
-        outp.append('%s: %.5f' % (disp, parameters[key]))
+        outp.append(' *%s: %.5f' % (disp, parameters[key]))
     return '\n'.join(outp)
 
 if __name__ == "__main__":
