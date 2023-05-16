@@ -64,26 +64,35 @@ class Main(QMainWindow):
         self.result_dict = None
 
     def do_analysis(self):
+        self.result_dict = self.fig_savename = self.save_filename = None
+
         self.filename = filename = self.ui.Filename.text().strip()
         if not os.path.isfile(filename):
             raise ValueError('%s does not exist' % filename)
         parameters = self.get_parameters()
         print('Start analysis')
         time0 = time.time()
-        _, self.result_dict = spectrum.analyze_spectrum(filename, parameters)
+        _, result_dict = spectrum.analyze_spectrum(filename, parameters)
         time1 = time.time()
         print('End analysis after %.0f s' % (time1-time0))
         save_filename = './analyzed_data/'+os.path.basename(filename).replace('.npz', '_analyzed.h5')
-        saveH5Recursive(save_filename, self.result_dict)
+        saveH5Recursive(save_filename, result_dict)
         print('Saved %s' % save_filename)
-        self.do_plot()
 
-    def do_plot(self):
-        result = self.result_dict
+        fig = self.do_plot(result_dict, filename)
+        fig_savename = './analyzed_data/'+os.path.basename(self.filename).replace('.npz', '_analyzed.png')
+        fig.savefig(fig_savename)
+        print('Saved %s' % fig_savename)
+
+        self.result_dict = result_dict
+        self.fig_savename = fig_savename
+        self.save_filename = self.save_filename
+
+    def do_plot(self, result, filename):
         self.fig, sps = plt.subplots(nrows=3, ncols=3, figsize=(12,10))
         self.fig.subplots_adjust(hspace=0.5, wspace=0.5)
         sps = sps.ravel()
-        plt.suptitle(os.path.basename(self.filename))
+        plt.suptitle(os.path.basename(filename))
 
         n_spikes = np.round(result['number_of_peaks']).astype(int)
         n_spikes_maxxed = np.clip(n_spikes, 0, 10)
@@ -119,15 +128,15 @@ class Main(QMainWindow):
             sp.plot(ene, _yy_fit/fit_max)
 
         plt.show(block=False)
+        return self.fig
 
     def do_logbook(self):
         if self.result_dict is None:
             print('No result to log.')
             return
-        fig_savename = './analyzed_data/'+os.path.basename(self.filename).replace('.npz', '_analyzed.png')
-        self.fig.savefig(fig_savename)
-        comment = parameters_to_text(self.result_dict['input_parameters'])
-        with open(fig_savename, 'rb') as f:
+        comment='File: %s\nAnalyzed file: %s\n\n' % (self.filename, self.save_filename)
+        comment += parameters_to_text(self.result_dict['input_parameters'])
+        with open(self.fig_savename, 'rb') as f:
             image = base64.b64encode(f.read()).decode('ascii')
         logbook.send_to_desy_elog('Spike fitting', 'Dr. Spike', 'INFO', comment, 'xfellog', image)
 
@@ -168,19 +177,19 @@ def parameters_to_text(parameters):
             ('sbr', 'Max. background-to-signal ratio'),
             ('intensity_thresh', 'Min. intensity rel. to highest intensity spectrum in dataset'),
             ]:
-        outp.append('%s: %.5f' % (disp, parameters[key]))
+        outp.append('*%s: %.5f' % (disp, parameters[key]))
     outp.append('Parameters for the lowpass frequency filter')
     for key, disp in [
             ('roughness', 'Roughness'),
             ('frequency_cutoff', 'Frequency cutoff'),
             ]:
-        outp.append('%s: %.5f' % (disp, parameters[key]))
+        outp.append('*%s: %.5f' % (disp, parameters[key]))
     outp.append('Parameters for the peak finding')
     for key, disp in [
             ('height', 'Peak min. relative height'),
             ('prominence', 'Peak min. relative prominence'),
             ]:
-        outp.append('%s: %.5f' % (disp, parameters[key]))
+        outp.append('*%s: %.5f' % (disp, parameters[key]))
     outp.append('Parameters for the Gaussian function fitting')
     for key, disp in [
             ('cutoff_height', 'Fit peak min. relative height'),
