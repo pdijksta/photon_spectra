@@ -134,7 +134,7 @@ class Main(QMainWindow):
         if self.result_dict is None:
             print('No result to log.')
             return
-        comment='File: %s\nAnalyzed File: %s\n\n' % (self.filename, self.save_filename)
+        comment = 'File: %s\nAnalyzed File: %s\n\n' % (self.filename, self.save_filename)
         comment += parameters_to_text(self.result_dict['input_parameters'])
         with open(self.fig_savename, 'rb') as f:
             image = base64.b64encode(f.read()).decode('ascii')
