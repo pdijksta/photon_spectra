@@ -140,9 +140,9 @@ class Main(QMainWindow):
             image = base64.b64encode(f.read()).decode('ascii')
         succeeded = logbook.send_to_desy_elog('Spike fitting', 'Dr. Spike', 'INFO', comment, 'xfellog', image)
         if succeeded:
-            print('Saved to logbook succeeded.')
+            print('Logbook save successful.')
         else:
-            print('Saved to logbook failed.')
+            print('Logbook save unsuccessful.')
 
 
     def select_file(self, widget):
