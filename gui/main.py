@@ -86,7 +86,7 @@ class Main(QMainWindow):
 
         self.result_dict = result_dict
         self.fig_savename = fig_savename
-        self.save_filename = self.save_filename
+        self.save_filename = save_filename
 
     def do_plot(self, result, filename):
         self.fig, sps = plt.subplots(nrows=3, ncols=3, figsize=(12,10))
@@ -138,7 +138,12 @@ class Main(QMainWindow):
         comment += parameters_to_text(self.result_dict['input_parameters'])
         with open(self.fig_savename, 'rb') as f:
             image = base64.b64encode(f.read()).decode('ascii')
-        logbook.send_to_desy_elog('Spike fitting', 'Dr. Spike', 'INFO', comment, 'xfellog', image)
+        succeeded = logbook.send_to_desy_elog('Spike fitting', 'Dr. Spike', 'INFO', comment, 'xfellog', image)
+        if succeeded:
+            print('Saved to logbook succeeded.')
+        else:
+            print('Saved to logbook failed.')
+
 
     def select_file(self, widget):
         def f():
