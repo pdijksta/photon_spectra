@@ -2,6 +2,7 @@ import os
 import sys
 import socket
 import time
+import struct
 
 import numpy as np
 import matplotlib
@@ -16,6 +17,7 @@ if '../../' not in sys.path:
     sys.path.append('../../')
 import spectrum
 from h5_storage import saveH5Recursive
+import logbook
 
 if __name__ == '__main__' and (not os.path.isfile('./gui.py') or os.path.getmtime('./gui.ui') > os.path.getmtime('./gui.py')):
     cmd = 'bash ./ui2py.sh'
@@ -58,6 +60,8 @@ class Main(QMainWindow):
             self.ui.Filename.setText('./test_data/20230413-19_10_59_waterflow.npz')
             self.default_path = './test_data/'
 
+        self.result_dict = None
+
     def do_analysis(self):
         self.filename = filename = self.ui.Filename.text().strip()
         if not os.path.isfile(filename):
@@ -68,15 +72,15 @@ class Main(QMainWindow):
         _, self.result_dict = spectrum.analyze_spectrum(filename, parameters)
         time1 = time.time()
         print('End analysis after %.0f s' % (time1-time0))
-        save_filename = './analyzed_data/'+os.path.basename(filename).replace('.npz', '.h5')
+        save_filename = './analyzed_data/'+os.path.basename(filename).replace('.npz', '_analyzed.h5')
         saveH5Recursive(save_filename, self.result_dict)
         print('Saved %s' % save_filename)
         self.do_plot()
 
     def do_plot(self):
         result = self.result_dict
-        fig, sps = plt.subplots(nrows=3, ncols=3, figsize=(12,10))
-        fig.subplots_adjust(hspace=0.5, wspace=0.5)
+        self.fig, sps = plt.subplots(nrows=3, ncols=3, figsize=(12,10))
+        self.fig.subplots_adjust(hspace=0.5, wspace=0.5)
         sps = sps.ravel()
         plt.suptitle(os.path.basename(self.filename))
 
@@ -115,6 +119,19 @@ class Main(QMainWindow):
 
         plt.show(block=False)
 
+    def do_logbook(self):
+        if self.result_dict is None:
+            print('No result to log.')
+            return
+        fig_savename = './analyzed_data/'+os.path.basename(self.filename).replace('.npz', '_analyzed.png')
+        self.fig.savefig(fig_savename)
+        comment = parameters_to_text(self.result_dict['input_parameters'])
+        with open(fig_savename, 'rb') as f:
+            b = bytearray(f.read())
+        fl = struct.unpack('f', b)
+        image = np.array(fl).decode()
+        logbook.send_to_desy_elog('Spike fitting', 'Dr. Spike', 'INFO', comment, 'xfellog', image)
+
     def select_file(self, widget):
         def f():
             QFileDialog = PyQt5.QtWidgets.QFileDialog
@@ -140,6 +157,38 @@ class Main(QMainWindow):
                 'cutoff_height': self.ui.ParFitHeight.value(),
                 })
         return parameters
+
+def parameters_to_text(parameters):
+    outp = [
+            'Used parameters',
+            '',
+            'Parameters that reject individual spectra',
+            ]
+    for key, disp in [
+            ('snr', 'Max. noise-to-signal ratio'),
+            ('sbr', 'Max. background-to-signal ratio'),
+            ('intensity_thresh', 'Min. intensity rel. to highest intensity spectrum in dataset'),
+            ]:
+        outp.append('%s: %.5f' % (disp, parameters[key]))
+    outp.append('Parameters for the lowpass frequency filter')
+    for key, disp in [
+            ('roughness', 'Roughness'),
+            ('frequency cutoff', 'Frequency cutoff'),
+            ]:
+        outp.append('%s: %.5f' % (disp, parameters[key]))
+    outp.append('Parameters for the peak finding')
+    for key, disp in [
+            ('height', 'Peak min. relative height'),
+            ('prominence', 'Peak min. relative prominence'),
+            ]:
+        outp.append('%s: %.5f' % (disp, parameters[key]))
+    outp.append('Parameters for the Gaussian function fitting')
+    for key, disp in [
+            ('cutoff_height', 'Fit peak min. relative height'),
+            ('cutoff_prominence', 'Fit peak min. relative prominence'),
+            ]:
+        outp.append('%s: %.5f' % (disp, parameters[key]))
+    return '\n'.join(outp)
 
 if __name__ == "__main__":
     # for pdb to work
