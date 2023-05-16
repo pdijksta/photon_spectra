@@ -75,12 +75,12 @@ class Main(QMainWindow):
         _, result_dict = spectrum.analyze_spectrum(filename, parameters)
         time1 = time.time()
         print('End analysis after %.0f s' % (time1-time0))
-        save_filename = './analyzed_data/'+os.path.basename(filename).replace('.npz', '_analyzed.h5')
+        save_filename = os.path.abspath('./analyzed_data/'+os.path.basename(filename).replace('.npz', '_analyzed.h5'))
         saveH5Recursive(save_filename, result_dict)
         print('Saved %s' % save_filename)
 
         fig = self.do_plot(result_dict, filename)
-        fig_savename = './analyzed_data/'+os.path.basename(self.filename).replace('.npz', '_analyzed.png')
+        fig_savename = os.path.abspath('./analyzed_data/'+os.path.basename(self.filename).replace('.npz', '_analyzed.png'))
         fig.savefig(fig_savename)
         print('Saved %s' % fig_savename)
 
@@ -134,7 +134,7 @@ class Main(QMainWindow):
         if self.result_dict is None:
             print('No result to log.')
             return
-        comment='File: %s\nAnalyzed file: %s\n\n' % (self.filename, self.save_filename)
+        comment='File: %s\nAnalyzed File: %s\n\n' % (self.filename, self.save_filename)
         comment += parameters_to_text(self.result_dict['input_parameters'])
         with open(self.fig_savename, 'rb') as f:
             image = base64.b64encode(f.read()).decode('ascii')
