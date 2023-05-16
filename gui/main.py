@@ -108,7 +108,7 @@ class Main(QMainWindow):
             sp = sps[n_spectrum+1]
             sp.set_title('Spectrum %i with %i spikes' % (n_spectrum, n_spikes[n_spectrum]))
             sp.set_xlabel('E (eV)')
-            sp.set_ylabel('Intensity (arb. units')
+            sp.set_ylabel('Intensity (arb. units)')
 
             _yy = result['raw_data_intensity'][n_spectrum]
             _yy_fit = result['fit_functions'][n_spectrum]
