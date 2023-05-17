@@ -13,11 +13,13 @@ import PyQt5
 from PyQt5 import QtCore, QtGui
 from PyQt5.QtWidgets import QMainWindow, QApplication
 
-if '../../' not in sys.path:
-    sys.path.append('../../')
-import spectrum
 from h5_storage import saveH5Recursive
 import logbook
+
+if '../../' not in sys.path:
+    sys.path.append('../../')
+
+import spectrum
 
 if __name__ == '__main__' and (not os.path.isfile('./gui.py') or os.path.getmtime('./gui.ui') > os.path.getmtime('./gui.py')):
     cmd = 'bash ./ui2py.sh'
@@ -138,12 +140,11 @@ class Main(QMainWindow):
         comment += parameters_to_text(self.result_dict['input_parameters'])
         with open(self.fig_savename, 'rb') as f:
             image = base64.b64encode(f.read()).decode('ascii')
-        succeeded = logbook.send_to_desy_elog('Spike fitting', 'Dr. Spike', 'INFO', comment, 'xfellog', image)
+        succeeded = logbook.send_to_desy_elog('SASE spectrum fit', os.path.basename(self.filename), 'INFO', comment, 'xfellog', image)
         if succeeded:
             print('Logbook save successful.')
         else:
             print('Logbook save unsuccessful.')
-
 
     def select_file(self, widget):
         def f():
