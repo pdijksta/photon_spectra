@@ -130,6 +130,8 @@ class Main(QMainWindow):
             sp.plot(ene, _yy/data_max)
             sp.plot(ene, _yy_fit/fit_max)
 
+        sps[1].get_shared_x_axes().join(*sps[1:])
+
         plt.show(block=False)
         return self.fig
 
