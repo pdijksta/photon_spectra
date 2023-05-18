@@ -81,14 +81,15 @@ class Main(QMainWindow):
         saveH5Recursive(save_filename, result_dict)
         print('Saved %s' % save_filename)
 
-        fig = self.do_plot(result_dict, filename)
-        fig_savename = os.path.abspath('./analyzed_data/'+os.path.basename(self.filename).replace('.npz', '_analyzed.png'))
-        fig.savefig(fig_savename)
-        print('Saved %s' % fig_savename)
-
+        self.fig = self.do_plot(result_dict, filename)
+        self.save_fig()
         self.result_dict = result_dict
-        self.fig_savename = fig_savename
         self.save_filename = save_filename
+
+    def save_fig(self):
+        self.fig_savename = os.path.abspath('./analyzed_data/'+os.path.basename(self.filename).replace('.npz', '_analyzed.png'))
+        self.fig.savefig(self.fig_savename)
+        print('Saved %s' % self.fig_savename)
 
     def do_plot(self, result, filename):
         self.fig, sps = plt.subplots(nrows=3, ncols=3, figsize=(12,10))
@@ -138,6 +139,7 @@ class Main(QMainWindow):
             return
         comment = 'File: %s\nAnalyzed File: %s\n\n' % (self.filename, self.save_filename)
         comment += parameters_to_text(self.result_dict['input_parameters'])
+        self.save_fig()
         with open(self.fig_savename, 'rb') as f:
             image = base64.b64encode(f.read()).decode('ascii')
         succeeded = logbook.send_to_desy_elog('SASE spectrum fit', os.path.basename(self.filename), 'INFO', comment, 'xfellog', image)
