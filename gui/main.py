@@ -110,14 +110,15 @@ class Main(QMainWindow):
         sp.bar(bar_x, ratios*100)
         sp.set_xticks(bar_x)
         xticklabels = ['%i' % x for x in bar_x]
-        xticklabels[-1] = xticklabels[-1]+'+'
+        if bar_x[-1] > 10:
+            xticklabels[-1] = xticklabels[-1]+'+'
         sp.set_xticklabels(xticklabels)
 
         all_spike_widths = []
         for list_ in result['all_spike_widths'].values():
             all_spike_widths.extend(list(list_))
         all_spike_widths = np.array(all_spike_widths)
-        all_spike_widths = all_spike_widths[all_spike_widths < 15]
+        all_spike_widths = all_spike_widths.clip(0, 15)
 
         sp = sps[1]
         sp.set_title('Spike widths (%i total, < 15 fs)' % len(all_spike_widths))

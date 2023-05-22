@@ -506,6 +506,19 @@
      <string>Logbook</string>
     </property>
    </widget>
+   <widget class="QLabel" name="label_22">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>10</y>
+      <width>771</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Main author: Adrian Rutschmann (ETH/PSI). Co-authors Philipp Dijkstal and Sara Kjaer</string>
+    </property>
+   </widget>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">
