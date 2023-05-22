@@ -341,6 +341,7 @@ class SpectrumDataset:
         self.filtered_spectra = self.fit_functions.copy()
 
         #readout analysed data
+        self.all_spike_widths = {}
         for num, spectra in zip(np.arange(0, self.spectrum_number)[self.noisebool], result):
             self.spectralist[spectra.spectrum_label] = spectra
             if spectra.noisybool:
@@ -353,7 +354,8 @@ class SpectrumDataset:
                     self.FWHM[spectra.spectrum_label] = spectra.FWHM
                     self.tmin[spectra.spectrum_label] = spectra.tmin
                     self.fit_functions[spectra.spectrum_label] = spectra.total_fit
-                    self.filtered_spectra[spectra.spectrum_label] = spectra.shiftraw
+                    self.filtered_spectra[spectra.spectrum_label] = spectra.spec
+                    self.all_spike_widths[str(num)] = np.array(spectra.all_sigma)
 
                     if count1 <= 1:
                         self.examples.append(spectra.shiftraw)

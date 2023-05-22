@@ -22,5 +22,6 @@ def analyze_spectrum(file_, parameters):
     parameters['h5_filename'] = file_
     analyzer = analysis_procedure.AnalysisProcedure()
     results_dict = analyzer.PerformMeas(parameters)
+    #import pdb; pdb.set_trace()
     return analyzer, results_dict
 

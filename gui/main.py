@@ -113,24 +113,42 @@ class Main(QMainWindow):
         xticklabels[-1] = xticklabels[-1]+'+'
         sp.set_xticklabels(xticklabels)
 
+        all_spike_widths = []
+        for list_ in result['all_spike_widths'].values():
+            all_spike_widths.extend(list(list_))
+        all_spike_widths = np.array(all_spike_widths)
+        all_spike_widths = all_spike_widths[all_spike_widths < 15]
+
+        sp = sps[1]
+        sp.set_title('Spike widths (%i total, < 15 fs)' % len(all_spike_widths))
+        sp.set_xlabel('FWHM spike widths (fs)')
+        sp.set_ylabel('Percentage')
+
+        values, bin_edges = np.histogram(all_spike_widths, bins=10, density=True)
+        bin_edges2 = (bin_edges[:-1] + bin_edges[1:])/2
+        sp.bar(bin_edges2, values*100)
+
         data_min = np.mean(np.min(result['raw_data_intensity'],axis=0))
         data_max = (result['raw_data_intensity'] - data_min).max()
         fit_max = np.max(result['fit_functions'])
+        filtered_max = np.max(result['filtered_spectra'])
 
-        for n_spectrum in range(8):
-            sp = sps[n_spectrum+1]
+        for n_spectrum in range(7):
+            sp = sps[n_spectrum+2]
             sp.set_title('Spectrum %i with %i spikes' % (n_spectrum, n_spikes[n_spectrum]))
             sp.set_xlabel('E (eV)')
             sp.set_ylabel('Intensity (arb. units)')
 
             _yy = result['raw_data_intensity'][n_spectrum]
+            _yy_filtered = result['filtered_spectra'][n_spectrum]
             _yy_fit = result['fit_functions'][n_spectrum]
             ene = result['raw_data_energy']
 
             sp.plot(ene, _yy/data_max)
+            sp.plot(ene, _yy_filtered/filtered_max)
             sp.plot(ene, _yy_fit/fit_max)
 
-        sps[1].get_shared_x_axes().join(*sps[1:])
+        sps[2].get_shared_x_axes().join(*sps[2:])
 
         plt.show(block=False)
         return self.fig

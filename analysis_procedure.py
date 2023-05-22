@@ -128,6 +128,8 @@ class AnalysisProcedure(QObject):
 
         results_dict['examples'] = self.dataset.examples
         results_dict['number_of_peaks'] = self.dataset.number_of_peaks
+        results_dict['all_spike_widths'] = self.dataset.all_spike_widths
+
         return results_dict
 
     def GetFigures(self):

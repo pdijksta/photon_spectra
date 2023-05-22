@@ -202,6 +202,7 @@ class single_spectra:
         self.Slices = [1]*self.n
         self.average_sigma = 0
         self.total_amplitude = 0
+        self.all_sigma = []
 
         if self.n > 0:
             self.getnumber = True
@@ -281,6 +282,7 @@ class single_spectra:
                 self.average_sigma += self.Slices[k].sigma*self.Slices[k].amplitude
                 self.total_amplitude += self.Slices[k].amplitude
                 self.total_fit += self.Slices[k].gausscurve
+                self.all_sigma.append(self.Slices[k].sigma*2.355)
 
             self.average_sigma = self.average_sigma/self.total_amplitude
 
@@ -306,15 +308,15 @@ class single_spectra:
             total_fit += slice.gausscurve
         self.total_fit = total_fit
 
-    def update_avg_sigma(self):
-        sum = 0
-        total_amplitude = 0
-        for slice in self.Slices:
-            sum += slice.sigma * slice.amplitude
-            total_amplitude += slice.amplitude
-        self.average_sigma = sum/total_amplitude
-        average = self.average_sigma / self.fact
-        self.FWHM = array(2.355 * average)
+    #def update_avg_sigma(self):
+    #    sum = 0
+    #    total_amplitude = 0
+    #    for slice in self.Slices:
+    #        sum += slice.sigma * slice.amplitude
+    #        total_amplitude += slice.amplitude
+    #    self.average_sigma = sum/total_amplitude
+    #    average = self.average_sigma / self.fact
+    #    self.FWHM = array(2.355 * average)
 
     def get_lowpass_signal_plot(self):
 
