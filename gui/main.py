@@ -109,16 +109,19 @@ class Main(QMainWindow):
 
         sp.bar(bar_x, ratios*100)
         sp.set_xticks(bar_x)
+        sp.axvline(np.mean(n_spikes[n_spikes != 0]), label='Mean (excl. 0)', color='tab:orange')
+        sp.axvline(np.median(n_spikes[n_spikes != 0]), label='Median (excl. 0)', color='tab:green')
         xticklabels = ['%i' % x for x in bar_x]
         if bar_x[-1] > 10:
             xticklabels[-1] = xticklabels[-1]+'+'
         sp.set_xticklabels(xticklabels)
+        sp.legend()
 
         all_spike_widths = []
         for list_ in result['all_spike_widths'].values():
             all_spike_widths.extend(list(list_))
-        all_spike_widths = np.array(all_spike_widths)
-        all_spike_widths = all_spike_widths.clip(0, 15)
+        all_spike_widths0 = np.array(all_spike_widths)
+        all_spike_widths = all_spike_widths0.clip(0, 15)
 
         sp = sps[1]
         sp.set_title('Spike widths (%i total, < 15 fs)' % len(all_spike_widths))
@@ -126,8 +129,11 @@ class Main(QMainWindow):
         sp.set_ylabel('Percentage')
 
         values, bin_edges = np.histogram(all_spike_widths, bins=10, density=True)
-        bin_edges2 = (bin_edges[:-1] + bin_edges[1:])/2
-        sp.bar(bin_edges2, values*100)
+        #bin_edges2 = (bin_edges[:-1] + bin_edges[1:])/2
+        sp.step(bin_edges[:-1], values*100, where='pre')
+        sp.axvline(np.mean(all_spike_widths0), label='Mean', color='tab:orange')
+        sp.axvline(np.median(all_spike_widths0), label='Median', color='tab:green')
+        sp.legend()
 
         data_min = np.mean(np.min(result['raw_data_intensity'],axis=0))
         data_max = (result['raw_data_intensity'] - data_min).max()
