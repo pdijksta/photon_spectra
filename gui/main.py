@@ -151,11 +151,12 @@ class Main(QMainWindow):
             _yy_fit = result['fit_functions'][n_spectrum]
             ene = result['raw_data_energy']
 
-            sp.plot(ene, _yy/data_max)
-            sp.plot(ene, _yy_filtered/filtered_max)
-            sp.plot(ene, _yy_fit/fit_max)
+            sp.plot(ene, _yy/data_max, label='Data')
+            sp.plot(ene, _yy_filtered/filtered_max, label='Filtered')
+            sp.plot(ene, _yy_fit/fit_max, label='Fit')
 
         sps[2].get_shared_x_axes().join(*sps[2:])
+        sps[2].legend()
 
         plt.show(block=False)
         return self.fig
