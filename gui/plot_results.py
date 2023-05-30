@@ -36,7 +36,7 @@ def standard_plot(filename, result, figsize=(12,10), xlims=None):
 
     sp = sps[1]
     sp.set_title('Spike widths (%i total, < 15 fs)' % len(all_spike_widths))
-    sp.set_xlabel('FWHM spike widths (fs)')
+    sp.set_xlabel('FWHM spike widths (eV)')
     sp.set_ylabel('Percentage')
 
     values, bin_edges = np.histogram(all_spike_widths, bins=10, density=True)
