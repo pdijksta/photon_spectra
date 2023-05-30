@@ -1,22 +1,22 @@
 from photon_spectra import analysis_procedure
 
-#def get_input_parameters():
-#    return {
-#        'height': 20,
-#        'prominence': 10,
-#        'spike-width': 1,
-#        'auto-correlation': 0,
-#        'parameter optimization': 1,
-#        'pulse duration correction': 0,
-#        'snr': 0.05,
-#        'sbr': 0.15,
-#        'intensity_thresh': 0.4,
-#        'roughness': 200,
-#        'frequency_cutoff': 0.0001,
-#        'background_prominence': 1.5,
-#        'cutoff_prominence': 5.0,
-#        'cutoff_height': 70.0,
-#        }.copy()
+default_input_parameters = {
+    'height': 20,
+    'prominence': 5,
+    'spike-width': 1,
+    'auto-correlation': 0,
+    'parameter optimization': 0,
+    'pulse duration correction': 0,
+    'snr': 1,
+    'sbr': 0.1,
+    'intensity_thresh': 0.25,
+    'roughness': 0.75,
+    'frequency_cutoff': 0.05,
+    'background_prominence': 6,
+    'cutoff_prominence': 5,
+    'cutoff_height': 20,
+    }
+
 
 def analyze_spectrum(file_, parameters):
     parameters['h5_filename'] = file_
