@@ -35,12 +35,11 @@ def standard_plot(filename, result, figsize=(12,10), xlims=None):
     all_spike_widths = all_spike_widths0.clip(0, 15)
 
     sp = sps[1]
-    sp.set_title('Spike widths (%i total, < 15 fs)' % len(all_spike_widths))
+    sp.set_title('Spike widths (%i total, < 15 eV)' % len(all_spike_widths))
     sp.set_xlabel('FWHM spike widths (eV)')
     sp.set_ylabel('Percentage')
 
     values, bin_edges = np.histogram(all_spike_widths, bins=10, density=True)
-    #bin_edges2 = (bin_edges[:-1] + bin_edges[1:])/2
     sp.step(bin_edges[:-1], values*100, where='pre')
     sp.axvline(np.mean(all_spike_widths0), label='Mean', color='tab:orange')
     sp.axvline(np.median(all_spike_widths0), label='Median', color='tab:green')
@@ -65,7 +64,6 @@ def standard_plot(filename, result, figsize=(12,10), xlims=None):
         sp.plot(ene, _yy/data_max, label='Data')
         sp.plot(ene, _yy_filtered/filtered_max, label='Filtered')
         sp.plot(ene, _yy_fit/fit_max, label='Fit')
-
 
     sps[2].get_shared_x_axes().join(*sps[2:])
     sps[2].legend()
