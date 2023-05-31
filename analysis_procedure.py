@@ -129,6 +129,8 @@ class AnalysisProcedure(QObject):
         results_dict['examples'] = self.dataset.examples
         results_dict['number_of_peaks'] = self.dataset.number_of_peaks
         results_dict['all_spike_widths'] = self.dataset.all_spike_widths
+        results_dict['all_spike_amplitudes'] = self.dataset.all_spike_amplitudes
+        results_dict['all_spike_centers'] = self.dataset.all_spike_centers
 
         return results_dict
 
