@@ -10,7 +10,7 @@ default_input_parameters = {
     'snr': 1,
     'sbr': 0.1,
     'intensity_thresh': 0.25,
-    'roughness': 0.75,
+    'roughness': 0.5,
     'frequency_cutoff': 0.05,
     'background_prominence': 6,
     'cutoff_prominence': 5,
