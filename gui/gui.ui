@@ -279,6 +279,9 @@
       <height>24</height>
      </rect>
     </property>
+    <property name="decimals">
+     <number>4</number>
+    </property>
     <property name="maximum">
      <double>1.000000000000000</double>
     </property>
@@ -526,7 +529,7 @@
      <x>0</x>
      <y>0</y>
      <width>800</width>
-     <height>20</height>
+     <height>22</height>
     </rect>
    </property>
   </widget>
