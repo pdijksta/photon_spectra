@@ -105,7 +105,7 @@ class Main(QMainWindow):
         if args.facility == 'XFEL':
             save_filename = os.path.abspath('./analyzed_data/'+os.path.basename(filename).replace('.npz', '_analyzed.h5'))
         elif args.facility == 'SwissFEL':
-            save_filename = os.path.abspath('./analyzed_data/')+datetime.now().strftime('%Y_%m_%d-%H_%M_%S_spike_counting.h5')
+            save_filename = os.path.abspath('./analyzed_data/'+datetime.now().strftime('%Y_%m_%d-%H_%M_%S_spike_counting.h5'))
         saveH5Recursive(save_filename, result_dict)
         print('Saved %s' % save_filename)
 
@@ -132,7 +132,6 @@ class Main(QMainWindow):
             return
         comment = 'File: %s\nAnalyzed File: %s\n\n' % (self.filename, self.save_filename)
         comment += parameters_to_text(self.result_dict['input_parameters'])
-        self.save_fig()
         with open(self.fig_savename, 'rb') as f:
             image = base64.b64encode(f.read()).decode('ascii')
         if args.facility == 'XFEL':

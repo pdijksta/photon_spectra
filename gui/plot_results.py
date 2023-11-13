@@ -20,10 +20,12 @@ def standard_plot(filename, result, figsize=(12,10), xlims=None):
 
     sp.bar(bar_x, ratios*100)
     sp.set_xticks(bar_x)
-    sp.axvline(np.mean(n_spikes[n_spikes != 0]), label='Mean (excl. 0)', color='tab:orange')
-    sp.axvline(np.median(n_spikes[n_spikes != 0]), label='Median (excl. 0)', color='tab:green')
+    mean_spikes = np.mean(n_spikes[n_spikes != 0])
+    median_spikes = np.median(n_spikes[n_spikes != 0])
+    sp.axvline(mean_spikes, label='Mean (excl. 0): %.1f' % mean_spikes, color='tab:orange')
+    sp.axvline(median_spikes, label='Median (excl. 0): %.1f' % median_spikes, color='tab:green')
     xticklabels = ['%i' % x for x in bar_x]
-    if bar_x[-1] > 10:
+    if n_spikes.max() > 10:
         xticklabels[-1] = xticklabels[-1]+'+'
     sp.set_xticklabels(xticklabels)
     sp.legend()
@@ -47,7 +49,7 @@ def standard_plot(filename, result, figsize=(12,10), xlims=None):
 
     data_min = np.mean(np.min(result['raw_data_intensity'],axis=0))
     data_max = (result['raw_data_intensity'] - data_min).max()
-    fit_max = np.max(result['fit_functions'])
+    #fit_max = np.max(result['fit_functions'])
     filtered_max = np.max(result['filtered_spectra'])
 
     for n_spectrum in range(7):
@@ -62,8 +64,10 @@ def standard_plot(filename, result, figsize=(12,10), xlims=None):
         ene = result['raw_data_energy']
 
         sp.plot(ene, _yy/data_max, label='Data')
-        sp.plot(ene, _yy_filtered/filtered_max, label='Filtered')
-        sp.plot(ene, _yy_fit/fit_max, label='Fit')
+        filter_plot = _yy_filtered/filtered_max
+        sp.plot(ene, filter_plot, label='Filtered')
+        fit_plot = _yy_fit / _yy_fit.max()*filter_plot.max()
+        sp.plot(ene, fit_plot, label='Fit')
 
     sps[2].get_shared_x_axes().join(*sps[2:])
     sps[2].legend()
