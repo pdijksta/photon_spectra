@@ -102,14 +102,12 @@ class Main(QMainWindow):
         if args.facility == 'XFEL':
             save_filename = os.path.abspath('./analyzed_data/'+os.path.basename(filename).replace('.npz', '_analyzed.h5'))
         elif args.facility == 'SwissFEL':
-            save_filename = datetime.now().strftime('/sf/data/measurements/%Y/%m/%d/%Y_%m_%d-%H_%M_%S_spike_counting.h5')
-        if args.facility == 'XFEL':
-            saveH5Recursive(save_filename, result_dict)
-            print('Saved %s' % save_filename)
+            save_filename = os.path.abspath('./analyzed_data/')+datetime.now().strftime('%Y_%m_%d-%H_%M_%S_spike_counting.h5')
+        saveH5Recursive(save_filename, result_dict)
+        print('Saved %s' % save_filename)
 
         self.fig = self.do_plot(result_dict, filename)
-        if args.facility == 'XFEL':
-            self.save_fig(save_filename)
+        self.save_fig(save_filename)
         self.result_dict = result_dict
         self.save_filename = save_filename
 

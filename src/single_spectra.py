@@ -249,8 +249,8 @@ class single_spectra:
                 self.average_sigma += self.Slices[k].sigma*self.Slices[k].amplitude
                 self.total_amplitude += self.Slices[k].amplitude
                 self.total_fit += self.Slices[k].gausscurve
-                self.all_fwhm.append(self.Slices[k].sigma*2.355)
-                self.all_center.append(self.Slices[k].center)
+                self.all_fwhm.append(self.Slices[k].sigma*2.355/self.fact)
+                self.all_center.append(self.Slices[k].center/self.fact)
                 self.all_amplitude.append(self.Slices[k].amplitude)
 
 
