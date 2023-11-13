@@ -33,7 +33,6 @@ def standard_plot(filename, result, figsize=(12,10), xlims=None):
         all_spike_widths.extend(list(list_))
     all_spike_widths0 = np.array(all_spike_widths)
     all_spike_widths = all_spike_widths0.clip(0, 5)
-    import pdb; pdb.set_trace()
 
     sp = sps[1]
     sp.set_title('Spike widths (%i total, < 5 eV)' % len(all_spike_widths))

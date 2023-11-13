@@ -32,6 +32,7 @@ if args.facility == 'XFEL':
     import logbook
     default_input_parameters = spectrum.default_input_parameters_xfel
     default_filename = './test_data/20230413-19_10_59_waterflow.npz'
+    filename_label = 'Abs file path (waterflow.npz)'
 elif args.facility == 'SwissFEL':
     try:
         import elog
@@ -39,6 +40,7 @@ elif args.facility == 'SwissFEL':
         print('elog python module unavailable')
     default_input_parameters = spectrum.default_input_parameters_swissfel
     default_filename = '/sf/data/measurements/2023/10/22/fel_spectra_20231022_193353.h5'
+    filename_label = 'Abs file path'
 
 if __name__ == '__main__' and (not os.path.isfile('./gui.py') or os.path.getmtime('./gui.ui') > os.path.getmtime('./gui.py')):
     cmd = 'bash ./ui2py.sh'
@@ -85,6 +87,7 @@ class Main(QMainWindow):
         if elog is not None:
             self.logbook = elog.open('https://elog-gfa.psi.ch/SwissFEL+commissioning+data/', user='robot', password='robot')
         self.ui.Filename.setText(default_filename)
+        self.ui.FilenameLabel.setText(filename_label)
 
     def do_analysis(self):
         self.result_dict = self.fig_savename = self.save_filename = None

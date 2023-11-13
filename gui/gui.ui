@@ -357,7 +357,7 @@
      <string/>
     </property>
    </widget>
-   <widget class="QLabel" name="label_19">
+   <widget class="QLabel" name="FilenameLabel">
     <property name="geometry">
      <rect>
       <x>10</x>
