@@ -105,8 +105,8 @@ class SpectrumDataset:
             self.intense = f['y-axis']
             self.photE = np.array(f["x-axis"])
         elif 'SARFE10-PSSS059:SPECTRUM_X' in f.keys() and 'SARFE10-PSSS059:SPECTRUM_Y' in f.keys():
-            self.photE = np.array(f['SARFE10-PSSS059:SPECTRUM_X']['data'][0])
-            self.intense = f['SARFE10-PSSS059:SPECTRUM_Y']['data']
+            self.photE = np.array(f['SARFE10-PSSS059:SPECTRUM_X']['data'][0], np.float64)
+            self.intense = np.array(f['SARFE10-PSSS059:SPECTRUM_Y']['data'], np.float64)
         elif 'scan 1/data/SARFE10-PSSS059/SPECTRUM_Y' in f and 'scan 1/data/SARFE10-PSSS059/SPECTRUM_X' in f:
             #self.photE = np.array(f['scan 1/data/SARFE10-PSSS059/SPECTRUM_X'][0, 0,:2560])
             #self.intense = f['scan 1/data/SARFE10-PSSS059/SPECTRUM_Y'][:,0,:2560]
@@ -253,7 +253,7 @@ class SpectrumDataset:
 
                 #lowpassfilter
                 spectra = single_spectra(self.intense[i, :]/self.average_energy, self.photE, self.fact, i)
-                lpcutoff = spectra.adaptive_butterworth_filter(self.params['frequency_cutoff'], self.params['roughness'], self.params['snr'], self.params['sbr'])
+                lpcutoff = spectra.adaptive_butterworth_filter(self.params['frequency_cutoff'], self.params['snr'], self.params['sbr'])
                 #check if the spectrum is noisy or not
                 if not(spectra.noisybool):
 
@@ -324,7 +324,8 @@ class SpectrumDataset:
         #if the analysis takes longer than three minutes abort it, one could instead implement a system where the analysis can be aborted by the abort button
         try:
             result = resulttmp.get(timeout=180)
-        except:
+        except Exception as e:
+            print(e)
             self.pool.terminate()
             self.pool.join()
             print('timeout')

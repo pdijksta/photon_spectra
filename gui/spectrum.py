@@ -1,6 +1,6 @@
 from photon_spectra import analysis_procedure
 
-default_input_parameters = {
+default_input_parameters_xfel = {
     'height': 20,
     'prominence': 5,
     'spike-width': 1,
@@ -10,18 +10,31 @@ default_input_parameters = {
     'snr': 1,
     'sbr': 0.1,
     'intensity_thresh': 0.25,
-    'roughness': 0.5,
-    'frequency_cutoff': 0.05,
+    'frequency_cutoff': 0.7,
     'background_prominence': 6,
     'cutoff_prominence': 5,
     'cutoff_height': 20,
     }
 
+default_input_parameters_swissfel = {
+        'height': 20,
+        'prominence': 10,
+        'spike-width': 1,
+        'auto-correlation': 0,
+        'parameter optimization': 0,
+        'pulse duration correction': 0,
+        'snr': 0.05,
+        'sbr': 0.15,
+        'intensity_thresh': 0.1,
+        'frequency_cutoff': 0.1,
+        'background_prominence': 1.5,
+        'cutoff_prominence': 5.0,
+        'cutoff_height': 70.0,
+        }
 
 def analyze_spectrum(file_, parameters):
     parameters['h5_filename'] = file_
     analyzer = analysis_procedure.AnalysisProcedure()
     results_dict = analyzer.PerformMeas(parameters)
-    #import pdb; pdb.set_trace()
     return analyzer, results_dict
 

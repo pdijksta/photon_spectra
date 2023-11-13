@@ -1,7 +1,9 @@
+import argparse
 import os
 import sys
 import socket
 import time
+from datetime import datetime
 import base64
 
 import matplotlib
@@ -13,14 +15,30 @@ from PyQt5 import QtCore, QtGui
 from PyQt5.QtWidgets import QMainWindow, QApplication
 
 from h5_storage import saveH5Recursive
-import logbook
 
 if '../../' not in sys.path:
     sys.path.append('../../')
 
 import spectrum
-from spectrum import default_input_parameters
 import plot_results
+
+
+parser = argparse.ArgumentParser()
+parser.add_argument('--facility', default='XFEL', choices=('XFEL', 'SwissFEL'))
+args = parser.parse_args()
+
+elog = None
+if args.facility == 'XFEL':
+    import logbook
+    default_input_parameters = spectrum.default_input_parameters_xfel
+    default_filename = './test_data/20230413-19_10_59_waterflow.npz'
+elif args.facility == 'SwissFEL':
+    try:
+        import elog
+    except ImportError:
+        print('elog python module unavailable')
+    default_input_parameters = spectrum.default_input_parameters_swissfel
+    default_filename = '/sf/data/measurements/2023/10/22/fel_spectra_20231022_193353.h5'
 
 if __name__ == '__main__' and (not os.path.isfile('./gui.py') or os.path.getmtime('./gui.ui') > os.path.getmtime('./gui.py')):
     cmd = 'bash ./ui2py.sh'
@@ -54,7 +72,6 @@ class Main(QMainWindow):
             ('snr', self.ui.ParSnr),
             ('sbr', self.ui.ParSbr),
             ('intensity_thresh', self.ui.ParIntThresh),
-            ('roughness', self.ui.ParRoughness),
             ('frequency_cutoff', self.ui.ParFreqCutoff),
             ('background_prominence', self.ui.ParBackProm),
             ('cutoff_prominence', self.ui.ParFitProminence),
@@ -65,6 +82,9 @@ class Main(QMainWindow):
             widget.setValue(default_input_parameters[key])
 
         self.result_dict = None
+        if elog is not None:
+            self.logbook = elog.open('https://elog-gfa.psi.ch/SwissFEL+commissioning+data/', user='robot', password='robot')
+        self.ui.Filename.setText(default_filename)
 
     def do_analysis(self):
         self.result_dict = self.fig_savename = self.save_filename = None
@@ -78,17 +98,24 @@ class Main(QMainWindow):
         _, result_dict = spectrum.analyze_spectrum(filename, parameters)
         time1 = time.time()
         print('End analysis after %.0f s' % (time1-time0))
-        save_filename = os.path.abspath('./analyzed_data/'+os.path.basename(filename).replace('.npz', '_analyzed.h5'))
-        saveH5Recursive(save_filename, result_dict)
-        print('Saved %s' % save_filename)
+
+        if args.facility == 'XFEL':
+            save_filename = os.path.abspath('./analyzed_data/'+os.path.basename(filename).replace('.npz', '_analyzed.h5'))
+        elif args.facility == 'SwissFEL':
+            save_filename = datetime.now().strftime('/sf/data/measurements/%Y/%m/%d/%Y_%m_%d-%H_%M_%S_spike_counting.h5')
+        if args.facility == 'XFEL':
+            saveH5Recursive(save_filename, result_dict)
+            print('Saved %s' % save_filename)
 
         self.fig = self.do_plot(result_dict, filename)
-        self.save_fig()
+        if args.facility == 'XFEL':
+            self.save_fig(save_filename)
         self.result_dict = result_dict
         self.save_filename = save_filename
 
-    def save_fig(self):
-        self.fig_savename = os.path.abspath('./analyzed_data/'+os.path.basename(self.filename).replace('.npz', '_analyzed.png'))
+    def save_fig(self, save_filename):
+
+        self.fig_savename = save_filename.replace('.h5', '.png')
         self.fig.savefig(self.fig_savename)
         print('Saved %s' % self.fig_savename)
 
@@ -107,11 +134,19 @@ class Main(QMainWindow):
         self.save_fig()
         with open(self.fig_savename, 'rb') as f:
             image = base64.b64encode(f.read()).decode('ascii')
-        succeeded = logbook.send_to_desy_elog('SASE spectrum fit', os.path.basename(self.filename), 'INFO', comment, 'xfellog', image)
-        if succeeded:
-            print('Logbook save successful.')
-        else:
-            print('Logbook save unsuccessful.')
+        if args.facility == 'XFEL':
+            succeeded = logbook.send_to_desy_elog('SASE spectrum fit', os.path.basename(self.filename), 'INFO', comment, 'xfellog', image)
+            if succeeded:
+                print('Logbook save successful.')
+            else:
+                print('Logbook save unsuccessful.')
+        elif args.facility == 'SwissFEL':
+            if elog is None:
+                print('Cannot save to elog. elog module unavailable.')
+                return
+
+            dict_att = {'Author': 'Application: OfflineSpikeCounting', 'Application': 'OfflineSpikeCounting', 'Category': 'Measurement', 'Title': 'Spike counting analysis'}
+            self.logbook.post(comment, attributes=dict_att, attachments=[self.fig_savename])
 
     def select_file(self, widget):
         def f():
@@ -143,7 +178,6 @@ def parameters_to_text(parameters):
         outp.append(' *%s: %.5f' % (disp, parameters[key]))
     outp.append('*Parameters for the lowpass frequency filter')
     for key, disp in [
-            ('roughness', 'Roughness'),
             ('frequency_cutoff', 'Frequency cutoff'),
             ]:
         outp.append(' *%s: %.5f' % (disp, parameters[key]))

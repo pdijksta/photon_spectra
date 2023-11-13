@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>800</width>
-    <height>600</height>
+    <height>541</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -180,7 +180,7 @@
     <property name="geometry">
      <rect>
       <x>20</x>
-      <y>360</y>
+      <y>320</y>
       <width>141</width>
       <height>21</height>
      </rect>
@@ -189,37 +189,11 @@
      <string>Height (%)</string>
     </property>
    </widget>
-   <widget class="QLabel" name="label_10">
-    <property name="geometry">
-     <rect>
-      <x>20</x>
-      <y>280</y>
-      <width>111</width>
-      <height>21</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Roughness</string>
-    </property>
-   </widget>
-   <widget class="QLabel" name="label_11">
-    <property name="geometry">
-     <rect>
-      <x>420</x>
-      <y>280</y>
-      <width>321</width>
-      <height>21</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>For lowpass filter. Do not change this number</string>
-    </property>
-   </widget>
    <widget class="QLabel" name="label_12">
     <property name="geometry">
      <rect>
       <x>420</x>
-      <y>320</y>
+      <y>280</y>
       <width>321</width>
       <height>21</height>
      </rect>
@@ -232,7 +206,7 @@
     <property name="geometry">
      <rect>
       <x>330</x>
-      <y>360</y>
+      <y>320</y>
       <width>62</width>
       <height>24</height>
      </rect>
@@ -248,7 +222,7 @@
     <property name="geometry">
      <rect>
       <x>20</x>
-      <y>320</y>
+      <y>280</y>
       <width>131</width>
       <height>21</height>
      </rect>
@@ -261,7 +235,7 @@
     <property name="geometry">
      <rect>
       <x>420</x>
-      <y>360</y>
+      <y>320</y>
       <width>321</width>
       <height>21</height>
      </rect>
@@ -274,38 +248,19 @@
     <property name="geometry">
      <rect>
       <x>330</x>
-      <y>320</y>
+      <y>280</y>
       <width>62</width>
       <height>24</height>
      </rect>
     </property>
     <property name="decimals">
-     <number>4</number>
+     <number>6</number>
     </property>
     <property name="maximum">
      <double>1.000000000000000</double>
     </property>
     <property name="value">
      <double>0.050000000000000</double>
-    </property>
-   </widget>
-   <widget class="QDoubleSpinBox" name="ParRoughness">
-    <property name="geometry">
-     <rect>
-      <x>330</x>
-      <y>280</y>
-      <width>62</width>
-      <height>24</height>
-     </rect>
-    </property>
-    <property name="readOnly">
-     <bool>false</bool>
-    </property>
-    <property name="minimum">
-     <double>0.100000000000000</double>
-    </property>
-    <property name="value">
-     <double>0.750000000000000</double>
     </property>
    </widget>
    <widget class="QLabel" name="label_15">
@@ -354,7 +309,7 @@
     <property name="geometry">
      <rect>
       <x>420</x>
-      <y>400</y>
+      <y>360</y>
       <width>261</width>
       <height>21</height>
      </rect>
@@ -367,7 +322,7 @@
     <property name="geometry">
      <rect>
       <x>20</x>
-      <y>400</y>
+      <y>360</y>
       <width>111</width>
       <height>21</height>
      </rect>
@@ -380,7 +335,7 @@
     <property name="geometry">
      <rect>
       <x>330</x>
-      <y>400</y>
+      <y>360</y>
       <width>62</width>
       <height>24</height>
      </rect>
@@ -393,20 +348,20 @@
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>510</y>
+      <y>460</y>
       <width>681</width>
       <height>23</height>
      </rect>
     </property>
     <property name="text">
-     <string>./test_data/20230413-19_10_59_waterflow.npz</string>
+     <string/>
     </property>
    </widget>
    <widget class="QLabel" name="label_19">
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>470</y>
+      <y>420</y>
       <width>181</width>
       <height>21</height>
      </rect>
@@ -419,7 +374,7 @@
     <property name="geometry">
      <rect>
       <x>490</x>
-      <y>470</y>
+      <y>420</y>
       <width>81</width>
       <height>23</height>
      </rect>
@@ -432,7 +387,7 @@
     <property name="geometry">
      <rect>
       <x>0</x>
-      <y>450</y>
+      <y>400</y>
       <width>791</width>
       <height>16</height>
      </rect>
@@ -487,7 +442,7 @@
     <property name="geometry">
      <rect>
       <x>370</x>
-      <y>470</y>
+      <y>420</y>
       <width>81</width>
       <height>23</height>
      </rect>
@@ -500,7 +455,7 @@
     <property name="geometry">
      <rect>
       <x>610</x>
-      <y>470</y>
+      <y>420</y>
       <width>81</width>
       <height>23</height>
      </rect>

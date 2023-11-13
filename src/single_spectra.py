@@ -3,7 +3,6 @@ from numpy import array, std, zeros_like, zeros, logical_and, empty, where, all
 from numpy import sum as npsum
 from numpy import max as npmax
 from numpy import min as npmin
-from numpy import sqrt as npsqrt
 from numpy import average as npaverage
 import time
 from scipy.signal import find_peaks, butter, filtfilt
@@ -50,50 +49,18 @@ class single_spectra:
         self.tmin = None
         self.redchi = None
 
-    def adaptive_butterworth_filter(self, lowpasscutoff, alpha, snr, sbr):
+    def adaptive_butterworth_filter(self, lowpasscutoff, snr, sbr):
         tlowstart = time.time()
-        lpcutoffinit = lowpasscutoff*1.0
         lpcutoff = lowpasscutoff*1.0
         rd = np.inf
-        switched = False
-        while True:
-
-            if lpcutoff >= 1 or lpcutoff <= 0:
-                b, a = butter(self.deg, lpcutoffinit, 'low')
-                self.spec = filtfilt(b, a, self.intensity)
-            else:
-                b, a = butter(self.deg, lpcutoff, 'low')
-                #print('r2filter:', rd, 'cutoff:', lpcutoff)
-                self.spec = filtfilt(b, a, self.intensity)
-
-            r2 = (npsum((self.intensity - self.spec) ** 2)+ alpha * npsum((self.spec[:-1] - self.spec[1:]) ** 2))
-
-            old_rd = rd
-            rd = npsqrt(r2 / len(self.photE))
-            if rd > old_rd:
-                if switched:
-                    lpcutoff += 0.001
-                    b, a = butter(self.deg, lpcutoff, 'low')
-                    self.spec = filtfilt(b, a, self.intensity)
-                    break
-                else:
-                    lpcutoff -= 0.001
-                    switched = True
-            else:
-                if switched:
-                    lpcutoff -= 0.001
-                else:
-                    lpcutoff += 0.001
+        b, a = butter(self.deg, lpcutoff, 'low')
+        self.spec = filtfilt(b, a, self.intensity)
 
         #if np.any(self.spec):
         #    print('Filtered data contains something')
         #    #import pdb; pdb.set_trace()
         #else:
         #    print('Filtered data contains nothing')
-
-
-
-
 
         self.r2filter = rd
         self.delta = np.quantile(self.spec, 0.2)
@@ -106,9 +73,7 @@ class single_spectra:
         #    print('shiftraw contains nothing')
 
         self.average_intensity = npaverage(self.shiftraw)
-
         self.max_intensity = npmax(self.shiftraw)
-
         self.noise = self.intensity - self.spec
 
         A = (self.shiftraw < npmax(self.shiftraw)*0.2)

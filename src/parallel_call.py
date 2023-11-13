@@ -5,7 +5,7 @@ from numpy import array
 def analyse_single_spectra(i, params, intense, photE, fact):
     spectra = single_spectra(intense, photE, fact, i)
 
-    spectra.adaptive_butterworth_filter(params['frequency_cutoff'], params['roughness'], params['snr'], params['sbr'])
+    spectra.adaptive_butterworth_filter(params['frequency_cutoff'], params['snr'], params['sbr'])
 
     if not (spectra.noisybool):
 
