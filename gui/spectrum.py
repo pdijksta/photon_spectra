@@ -28,8 +28,8 @@ default_input_parameters_swissfel = {
         'intensity_thresh': 0.1,
         'frequency_cutoff': 0.1,
         'background_prominence': 1.5,
-        'cutoff_prominence': 5.0,
-        'cutoff_height': 70.0,
+        'cutoff_prominence': 10.0,
+        'cutoff_height': 20.0,
         }
 
 def analyze_spectrum(file_, parameters):
