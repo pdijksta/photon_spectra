@@ -89,7 +89,8 @@ class SpectrumDataset:
                 print(e)
                 self.send_message('Wrong file format', f'The file {os.path.basename(self.datasetname)} could not be opened as an h5 file.')
                 return False
-        self.intense = np.unique(self.intense, axis=0)
+        _, indices = np.unique(self.intense, axis=0, return_index=True)
+        self.intense = self.intense[np.sort(indices)]
         self.intense = self.intense[np.sum(self.intense, axis=1) != 0]
         return status
 
