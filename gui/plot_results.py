@@ -2,7 +2,7 @@ import os
 import numpy as np
 import matplotlib.pyplot as plt
 
-def standard_plot(filename, result, figsize=(12,10), xlims=None):
+def standard_plot(filename, result, figsize=(12,10), xlims=None, max_eV=5):
     fig, sps = plt.subplots(nrows=3, ncols=3, figsize=figsize)
     fig.subplots_adjust(hspace=0.5, wspace=0.5)
     sps = sps.ravel()
@@ -34,10 +34,10 @@ def standard_plot(filename, result, figsize=(12,10), xlims=None):
     for list_ in result['all_spike_widths'].values():
         all_spike_widths.extend(list(list_))
     all_spike_widths0 = np.array(all_spike_widths)
-    all_spike_widths = all_spike_widths0.clip(0, 5)
+    all_spike_widths = all_spike_widths0.clip(0, max_eV)
 
     sp = sps[1]
-    sp.set_title('Spike widths (%i total, < 5 eV)' % len(all_spike_widths))
+    sp.set_title('Spike widths (%i total, < %.1f eV)' % (len(all_spike_widths), max_eV))
     sp.set_xlabel('FWHM spike widths (eV)')
     sp.set_ylabel('Percentage')
 
@@ -51,6 +51,8 @@ def standard_plot(filename, result, figsize=(12,10), xlims=None):
     data_max = (result['raw_data_intensity'] - data_min).max()
     #fit_max = np.max(result['fit_functions'])
     filtered_max = np.max(result['filtered_spectra'])
+
+    avg = np.mean(result['filtered_spectra'], axis=0)
 
     for n_spectrum in range(7):
         sp = sps[n_spectrum+2]
@@ -68,6 +70,7 @@ def standard_plot(filename, result, figsize=(12,10), xlims=None):
         sp.plot(ene, filter_plot, label='Filtered')
         fit_plot = _yy_fit / _yy_fit.max()*filter_plot.max()
         sp.plot(ene, fit_plot, label='Fit')
+        sp.plot(ene, avg/filtered_max, label='Avg', color='black', ls='--')
 
     sps[2].get_shared_x_axes().join(*sps[2:])
     sps[2].legend()
