@@ -43,8 +43,10 @@ def standard_plot(filename, result, figsize=(12,10), xlims=None, max_eV=5):
 
     values, bin_edges = np.histogram(all_spike_widths, bins=10, density=True)
     sp.step(bin_edges[:-1], values*100, where='pre')
-    sp.axvline(np.mean(all_spike_widths0), label='Mean', color='tab:orange')
-    sp.axvline(np.median(all_spike_widths0), label='Median', color='tab:green')
+    mean = np.mean(all_spike_widths0)
+    median = np.median(all_spike_widths0)
+    sp.axvline(mean, label='Mean %.1f' % mean, color='tab:orange')
+    sp.axvline(median, label='Median %.1f' % median, color='tab:green')
     sp.legend()
 
     data_min = np.mean(np.min(result['raw_data_intensity'],axis=0))
