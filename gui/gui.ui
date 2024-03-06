@@ -173,7 +173,7 @@
      </rect>
     </property>
     <property name="text">
-     <string>Lower means less spectra are rejected</string>
+     <string>Higher means less spectra are rejected</string>
     </property>
    </widget>
    <widget class="QLabel" name="label_9">
@@ -435,7 +435,7 @@
      </rect>
     </property>
     <property name="text">
-     <string>Lower means less spectra are rejected</string>
+     <string>Higher means less spectra are rejected</string>
     </property>
    </widget>
    <widget class="QPushButton" name="SelectFile">

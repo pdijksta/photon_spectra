@@ -74,7 +74,7 @@ def saveH5Recursive(h5_filename, data_dict):
             #elif type(mydata) is tuple:
             #    mydata2 = np.array(mydata)
             #    add_dataset(group, inner_key, mydata2, 'unknown')
-            elif (type(mydata) is list and type(mydata[0]) is str) or (hasattr(mydata, 'dtype') and mydata.dtype.type is np.str_):
+            elif (type(mydata) is list and len(mydata) > 0 and type(mydata[0]) is str) or (hasattr(mydata, 'dtype') and mydata.dtype.type is np.str_):
                 # For list of strings, we need this procedure
                 try:
                     if hasattr(mydata, 'dtype') and mydata.dtype.type is np.str and len(mydata.shape) == 2:
