@@ -94,7 +94,8 @@ class Main(QMainWindow):
 
         self.filename = filename = self.ui.Filename.text().strip()
         if not os.path.isfile(filename):
-            raise ValueError('%s does not exist' % filename)
+            print('%s does not exist' % filename)
+            return
         parameters = self.get_parameters()
         print('Start analysis')
         time0 = time.time()
