@@ -1,7 +1,6 @@
 #!/bin/bash
 
-source /opt/gfa/python 3.7
-
+DIR=/sf/bd/applications/photon_spectra
 
 __conda_setup="$('/sf/bd/packages/conda/bin/conda' 'shell.bash' 'hook' 2> /dev/null)"
 if [ $? -eq 0 ]; then
@@ -16,7 +15,9 @@ fi
 unset __conda_setup
 
 conda activate slic
-export PYTHONPATH=../pythonpath/uncertainties/:../pythonpath/:/sf/bd/members/Philipp/pythonpath/slic/
 
+export PYTHONPATH=$DIR/pythonpath/uncertainties/:$DIR/pythonpath/:/sf/bd/members/Philipp/pythonpath/slic/
+
+cd $DIR
 python main.py --facility SwissFEL
 
