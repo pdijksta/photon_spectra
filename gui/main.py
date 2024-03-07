@@ -25,6 +25,7 @@ import plot_results
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--facility', default='XFEL', choices=('XFEL', 'SwissFEL'))
+parser.add_argument('--filename', type=str)
 args = parser.parse_args()
 
 elog, epics = None, None
@@ -56,6 +57,9 @@ elif args.facility == 'SwissFEL':
     filename_label = 'Analysis: abs file path'
     daq_active = True
 
+if args.filename:
+    default_filename = args.filename
+
 if __name__ == '__main__' and (not os.path.isfile('./gui.py') or os.path.getmtime('./gui.ui') > os.path.getmtime('./gui.py')):
     cmd = 'bash ./ui2py.sh'
     print(cmd)
@@ -86,10 +90,8 @@ class Main(QMainWindow):
 
         if 'xfelbkr' in socket.gethostname():
             self.ui.Filename.setText('/Users/xfeloper/user/pySpectrometer/SASE2/20230413-19_10_59_waterflow.npz')
-            self.default_path = '/Users/xfeloper/user/pySpectrometer/'
         else:
             self.ui.Filename.setText('./test_data/20230413-19_10_59_waterflow.npz')
-            self.default_path = './test_data/'
 
         self.key_widget_dict = dict([
             ('height', self.ui.ParHeight),
@@ -145,7 +147,8 @@ class Main(QMainWindow):
         print('Saved %s' % self.fig_savename)
 
     def do_plot(self, result, filename):
-        self.fig, _ = plot_results.standard_plot(filename, result)
+        figs, _ = plot_results.standard_plot(filename, result, n_example_spectra=self.ui.NumExampleSpectra.value())
+        self.fig = figs[0]
 
         plt.show(block=False)
         return self.fig
@@ -177,7 +180,7 @@ class Main(QMainWindow):
             QFileDialog = PyQt5.QtWidgets.QFileDialog
             options = QFileDialog.Options()
             options |= QFileDialog.DontUseNativeDialog
-            filename, _ = QFileDialog.getOpenFileName(self, "QFileDialog.getOpenFileName()", self.default_path, "Npz files (*.npz);;All Files (*)", options=options)
+            filename, _ = QFileDialog.getOpenFileName(self, "QFileDialog.getOpenFileName()", os.path.dirname(self.ui.Filename.text()), "H5 files (*.h5);;Npz files (*.npz);;All Files (*)", options=options)
             if filename:
                 widget.setText(filename)
         return f
@@ -188,12 +191,25 @@ class Main(QMainWindow):
             parameters[key] = widget.value()
         return parameters
 
+    def get_daq_filename(self, prefix):
+        now = datetime.now()
+        return now.strftime('/sf/data/measurements/%Y/%m/%d/') + prefix + now.strftime('_spectra_%Y%m%d_%H%M%S.h5')
+
     def daq_psss(self):
-        filename = datetime.now().strftime('/sf/data/measurements/%Y/%m/%d/fel_spectra_%Y%m%d_%H%M%S.h5')
         channels = [
             'SARFE10-PSSS059:SPECTRUM_X',
             'SARFE10-PSSS059:SPECTRUM_Y',
             ]
+        self.do_daq('psss', channels)
+
+    def daq_maloja(self):
+        pass
+
+    def daq_furka(self):
+        pass
+
+    def do_daq(self, prefix, channels):
+        filename = self.get_daq_filename(prefix)
         n_pulses = self.ui.NumShots.value()
         bsread_to_h5(filename, channels, n_pulses)
         if os.path.isfile(filename):
@@ -204,11 +220,6 @@ class Main(QMainWindow):
         else:
             print('No file at %s' % filename)
 
-    def daq_maloja(self):
-        pass
-
-    def daq_furka(self):
-        pass
 
 def parameters_to_text(parameters):
     outp = [

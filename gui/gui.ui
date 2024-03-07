@@ -590,7 +590,7 @@
      <bool>true</bool>
     </property>
    </widget>
-   <widget class="QSpinBox" name="NumShots_2">
+   <widget class="QSpinBox" name="NumExampleSpectra">
     <property name="geometry">
      <rect>
       <x>440</x>
@@ -606,20 +606,20 @@
      <number>10000</number>
     </property>
     <property name="value">
-     <number>8</number>
+     <number>7</number>
     </property>
    </widget>
    <widget class="QLabel" name="label_11">
     <property name="geometry">
      <rect>
-      <x>323</x>
+      <x>303</x>
       <y>420</y>
-      <width>111</width>
+      <width>131</width>
       <height>21</height>
      </rect>
     </property>
     <property name="text">
-     <string>N example spectra</string>
+     <string>Plot example spectra</string>
     </property>
    </widget>
   </widget>
