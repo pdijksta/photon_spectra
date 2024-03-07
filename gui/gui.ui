@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>800</width>
-    <height>541</height>
+    <width>803</width>
+    <height>655</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -349,7 +349,7 @@
      <rect>
       <x>10</x>
       <y>460</y>
-      <width>681</width>
+      <width>781</width>
       <height>23</height>
      </rect>
     </property>
@@ -362,18 +362,18 @@
      <rect>
       <x>10</x>
       <y>420</y>
-      <width>181</width>
+      <width>301</width>
       <height>21</height>
      </rect>
     </property>
     <property name="text">
-     <string>Abs file path (waterflow.npz)</string>
+     <string>Abs file path (to be filled by GUI)</string>
     </property>
    </widget>
    <widget class="QPushButton" name="DoAnalysis">
     <property name="geometry">
      <rect>
-      <x>490</x>
+      <x>610</x>
       <y>420</y>
       <width>81</width>
       <height>23</height>
@@ -441,7 +441,7 @@
    <widget class="QPushButton" name="SelectFile">
     <property name="geometry">
      <rect>
-      <x>370</x>
+      <x>510</x>
       <y>420</y>
       <width>81</width>
       <height>23</height>
@@ -454,7 +454,7 @@
    <widget class="QPushButton" name="DoLogbook">
     <property name="geometry">
      <rect>
-      <x>610</x>
+      <x>710</x>
       <y>420</y>
       <width>81</width>
       <height>23</height>
@@ -477,13 +477,155 @@
      <string>Main author: Adrian Rutschmann (ETH/PSI). Co-authors Philipp Dijkstal and Sara Kjaer</string>
     </property>
    </widget>
+   <widget class="Line" name="line_2">
+    <property name="geometry">
+     <rect>
+      <x>0</x>
+      <y>490</y>
+      <width>791</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="orientation">
+     <enum>Qt::Horizontal</enum>
+    </property>
+   </widget>
+   <widget class="QLabel" name="FilenameLabel_2">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>510</y>
+      <width>341</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>DAQ</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="DAQ_PSSS">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>550</y>
+      <width>81</width>
+      <height>23</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>PSSS</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="DAQ_Maloja">
+    <property name="geometry">
+     <rect>
+      <x>120</x>
+      <y>550</y>
+      <width>81</width>
+      <height>23</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>PMOS Maloja</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="DAQ_Furka">
+    <property name="geometry">
+     <rect>
+      <x>230</x>
+      <y>550</y>
+      <width>81</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>PMOS Furka</string>
+    </property>
+   </widget>
+   <widget class="QSpinBox" name="NumShots">
+    <property name="geometry">
+     <rect>
+      <x>720</x>
+      <y>550</y>
+      <width>71</width>
+      <height>26</height>
+     </rect>
+    </property>
+    <property name="minimum">
+     <number>1</number>
+    </property>
+    <property name="maximum">
+     <number>10000</number>
+    </property>
+    <property name="value">
+     <number>1000</number>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_10">
+    <property name="geometry">
+     <rect>
+      <x>640</x>
+      <y>550</y>
+      <width>54</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Shots</string>
+    </property>
+   </widget>
+   <widget class="QCheckBox" name="checkBox">
+    <property name="geometry">
+     <rect>
+      <x>471</x>
+      <y>550</y>
+      <width>151</width>
+      <height>23</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Analyze immediately</string>
+    </property>
+   </widget>
+   <widget class="QSpinBox" name="NumShots_2">
+    <property name="geometry">
+     <rect>
+      <x>440</x>
+      <y>420</y>
+      <width>51</width>
+      <height>26</height>
+     </rect>
+    </property>
+    <property name="minimum">
+     <number>1</number>
+    </property>
+    <property name="maximum">
+     <number>10000</number>
+    </property>
+    <property name="value">
+     <number>8</number>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_11">
+    <property name="geometry">
+     <rect>
+      <x>323</x>
+      <y>420</y>
+      <width>111</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>N example spectra</string>
+    </property>
+   </widget>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>800</width>
+     <width>803</width>
      <height>22</height>
     </rect>
    </property>

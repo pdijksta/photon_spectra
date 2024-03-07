@@ -27,20 +27,26 @@ parser = argparse.ArgumentParser()
 parser.add_argument('--facility', default='XFEL', choices=('XFEL', 'SwissFEL'))
 args = parser.parse_args()
 
-elog = None
+elog, epics = None, None
 if args.facility == 'XFEL':
     import logbook
     default_input_parameters = spectrum.default_input_parameters_xfel
     default_filename = './test_data/20230413-19_10_59_waterflow.npz'
-    filename_label = 'Abs file path (waterflow.npz)'
+    filename_label = 'Analysis: abs file path (waterflow.npz)'
+    daq_active = False
 elif args.facility == 'SwissFEL':
     try:
         import elog
     except ImportError:
         print('elog python module unavailable')
+    try:
+        import epics
+    except ImportError:
+        print('epics python module unavailable')
     default_input_parameters = spectrum.default_input_parameters_swissfel
     default_filename = '/sf/data/measurements/2023/10/22/fel_spectra_20231022_193353.h5'
-    filename_label = 'Abs file path'
+    filename_label = 'Analysis: abs file path'
+    daq_active = True
 
 if __name__ == '__main__' and (not os.path.isfile('./gui.py') or os.path.getmtime('./gui.ui') > os.path.getmtime('./gui.py')):
     cmd = 'bash ./ui2py.sh'
@@ -60,6 +66,15 @@ class Main(QMainWindow):
         self.ui.SelectFile.clicked.connect(self.select_file(self.ui.Filename))
         self.ui.DoAnalysis.clicked.connect(self.do_analysis)
         self.ui.DoLogbook.clicked.connect(self.do_logbook)
+        for button, func in [
+                (self.ui.DAQ_PSSS, self.daq_psss),
+                (self.ui.DAQ_Maloja, self.daq_maloja),
+                (self.ui.DAQ_Furka, self.daq_furka),
+                ]:
+            if daq_active:
+                button.clicked.connect(func)
+            else:
+                button.setEnabled(False)
 
         if 'xfelbkr' in socket.gethostname():
             self.ui.Filename.setText('/Users/xfeloper/user/pySpectrometer/SASE2/20230413-19_10_59_waterflow.npz')
@@ -165,6 +180,15 @@ class Main(QMainWindow):
             parameters[key] = widget.value()
         return parameters
 
+    def daq_psss(self):
+        pass
+
+    def daq_maloja(self):
+        pass
+
+    def daq_furka(self):
+        pass
+
 def parameters_to_text(parameters):
     outp = [
             'Used parameters',
@@ -195,6 +219,9 @@ def parameters_to_text(parameters):
             ]:
         outp.append(' *%s: %.5f' % (disp, parameters[key]))
     return '\n'.join(outp)
+
+#swissfel_meta_pvs = [
+#        '
 
 if __name__ == "__main__":
     # for pdb to work
