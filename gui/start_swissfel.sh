@@ -18,6 +18,6 @@ conda activate slic
 
 export PYTHONPATH=$DIR/pythonpath/uncertainties/:$DIR/pythonpath/:/sf/bd/members/Philipp/pythonpath/slic/
 
-cd $DIR
+cd $DIR/gui
 python main.py --facility SwissFEL
 
