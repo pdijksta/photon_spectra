@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>803</width>
-    <height>655</height>
+    <height>627</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -509,7 +509,7 @@
       <x>10</x>
       <y>550</y>
       <width>81</width>
-      <height>23</height>
+      <height>21</height>
      </rect>
     </property>
     <property name="text">
@@ -522,7 +522,7 @@
       <x>120</x>
       <y>550</y>
       <width>81</width>
-      <height>23</height>
+      <height>21</height>
      </rect>
     </property>
     <property name="text">
@@ -585,6 +585,9 @@
     </property>
     <property name="text">
      <string>Analyze immediately</string>
+    </property>
+    <property name="checked">
+     <bool>true</bool>
     </property>
    </widget>
    <widget class="QSpinBox" name="NumShots_2">
