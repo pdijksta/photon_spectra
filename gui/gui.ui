@@ -574,7 +574,7 @@
      <string>Shots</string>
     </property>
    </widget>
-   <widget class="QCheckBox" name="checkBox">
+   <widget class="QCheckBox" name="AnalyzeImmediately">
     <property name="geometry">
      <rect>
       <x>471</x>

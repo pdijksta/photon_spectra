@@ -3,7 +3,7 @@ import os
 import numpy as np
 from uncertainties import unumpy
 
-from qtpy.QtCore import QObject, Signal
+#from qtpy.QtCore import QObject, Signal
 
 from .src.spectrum_dataset import GUISpectrumDataset
 _pymodule = os.path.basename(__file__)
@@ -25,15 +25,15 @@ def __LINE__():
     return inspect.currentframe().f_back.f_lineno
 
 
-class AnalysisProcedure(QObject):
-    trigger_abort = Signal()
-    trigger_analysis_message = Signal(str, str)
+class AnalysisProcedure():
+    #trigger_abort = Signal()
+    #trigger_analysis_message = Signal(str, str)
 
     def __init__(self, parent=None):
-        super(AnalysisProcedure, self).__init__(parent)
+        #super(AnalysisProcedure, self).__init__(parent)
         self.parent = parent
         self.abort = False
-        self.trigger_abort.connect(self.abort_update)
+        #self.trigger_abort.connect(self.abort_update)
         self.dataset = None
         self.parallel = True
         self.pool = None

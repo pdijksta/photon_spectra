@@ -70,7 +70,11 @@ def standard_plot(filename, result, figsize=(12,10), xlims=None, max_eV=5):
         sp.plot(ene, _yy/data_max, label='Data')
         filter_plot = _yy_filtered/filtered_max
         sp.plot(ene, filter_plot, label='Filtered')
-        fit_plot = _yy_fit / _yy_fit.max()*filter_plot.max()
+        _max = _yy_fit.max()
+        if _max != 0:
+            fit_plot = _yy_fit / _yy_fit.max()*filter_plot.max()
+        else:
+            fit_plot = _yy_fit
         sp.plot(ene, fit_plot, label='Fit')
         sp.plot(ene, avg/filtered_max, label='Avg', color='black', ls='--')
 

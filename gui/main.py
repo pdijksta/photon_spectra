@@ -40,9 +40,17 @@ elif args.facility == 'SwissFEL':
     except ImportError:
         print('elog python module unavailable')
     try:
-        import epics
+        #import epics
+        pass
     except ImportError:
         print('epics python module unavailable')
+    try:
+        from slic.core.acquisition.bsacquisition import bsread_to_h5
+        daq_active = True
+    except ImportError:
+        print('slic BSAcquisition unavailable')
+        daq_active = False
+
     default_input_parameters = spectrum.default_input_parameters_swissfel
     default_filename = '/sf/data/measurements/2023/10/22/fel_spectra_20231022_193353.h5'
     filename_label = 'Analysis: abs file path'
@@ -181,7 +189,20 @@ class Main(QMainWindow):
         return parameters
 
     def daq_psss(self):
-        pass
+        filename = datetime.now().strftime('/sf/data/measurements/%Y/%m/%d/fel_spectra_%Y%m%d_%H%M%S.h5')
+        channels = [
+            'SARFE10-PSSS059:SPECTRUM_X',
+            'SARFE10-PSSS059:SPECTRUM_Y',
+            ]
+        n_pulses = self.ui.NumShots.value()
+        bsread_to_h5(filename, channels, n_pulses)
+        if os.path.isfile(filename):
+            print('DAQ successful to %s' % filename)
+            self.ui.Filename.setText(filename)
+            if self.ui.AnalyzeImmediately.isChecked():
+                self.do_analysis()
+        else:
+            print('No file at %s' % filename)
 
     def daq_maloja(self):
         pass
@@ -227,8 +248,14 @@ if __name__ == "__main__":
     # for pdb to work
     PyQt5.QtCore.pyqtRemoveInputHook()
 
-    #make pyqt threadsafe
+    # make pyqt threadsafe
     QtCore.QCoreApplication.setAttribute(QtCore.Qt.AA_X11InitThreads)
+
+    # do not quit on python error
+    def my_excepthook(type, value, tback):
+        sys.__excepthook__(type, value, tback)
+
+    sys.excepthook = my_excepthook
 
     app = QApplication(sys.argv)
     app.setWindowIcon(QtGui.QIcon('./spikyboy.jpeg'))
