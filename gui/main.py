@@ -74,6 +74,7 @@ class Main(QMainWindow):
         QMainWindow.__init__(self)
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
+        self.setWindowTitle('Offline spike counting analysis')
 
         self.ui.SelectFile.clicked.connect(self.select_file(self.ui.Filename))
         self.ui.DoAnalysis.clicked.connect(self.do_analysis)
