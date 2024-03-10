@@ -29,6 +29,7 @@ parser.add_argument('--filename', type=str)
 args = parser.parse_args()
 
 elog, epics = None, None
+save_dir = os.path.abspath('./analyzed_data/')
 if args.facility == 'XFEL':
     import logbook
     default_input_parameters = spectrum.default_input_parameters_xfel
@@ -51,6 +52,10 @@ elif args.facility == 'SwissFEL':
     except ImportError:
         print('slic BSAcquisition unavailable')
         daq_active = False
+
+    _save_dir = datetime.now().strftime('/sf/data/measurements/%Y/%m/%d/')
+    if os.path.isdir(_save_dir) and os.access(_save_dir, os.W_OK):
+        save_dir = _save_dir
 
     default_input_parameters = spectrum.default_input_parameters_swissfel
     default_filename = '/sf/data/measurements/2023/10/22/fel_spectra_20231022_193353.h5'
@@ -94,6 +99,8 @@ class Main(QMainWindow):
         else:
             self.ui.Filename.setText('./test_data/20230413-19_10_59_waterflow.npz')
 
+        self.ui.SaveDir.setText(save_dir)
+
         self.key_widget_dict = dict([
             ('height', self.ui.ParHeight),
             ('prominence', self.ui.ParProminence),
@@ -128,17 +135,23 @@ class Main(QMainWindow):
         _, result_dict = spectrum.analyze_spectrum(filename, parameters)
         time1 = time.time()
         print('End analysis after %.0f s' % (time1-time0))
-
-        if args.facility == 'XFEL':
-            save_filename = os.path.abspath('./analyzed_data/'+os.path.basename(filename).replace('.npz', '_analyzed.h5'))
-        elif args.facility == 'SwissFEL':
-            save_filename = os.path.abspath('./analyzed_data/'+datetime.now().strftime('%Y_%m_%d-%H_%M_%S_spike_counting.h5'))
-        saveH5Recursive(save_filename, result_dict)
-        print('Saved %s' % save_filename)
-
-        self.fig = self.do_plot(result_dict, filename)
-        self.save_fig(save_filename)
         self.result_dict = result_dict
+        self.fig = self.do_plot(self.result_dict, self.filename)
+
+        if self.ui.AlwaysSave.isChecked():
+            self.saveAnalysis()
+
+    def saveAnalysis(self):
+        if args.facility == 'XFEL':
+            basename = os.path.basename(self.filename).replace('.npz', '_analyzed.h5')
+        elif args.facility == 'SwissFEL':
+            basename = os.path.basename(self.filename).replace('.h5', '_analyzed.h5')
+        save_filename = os.path.join(self.ui.SaveDir.text(), basename)
+        saveH5Recursive(save_filename, self.result_dict)
+        print('Saved %s' % save_filename)
+        self.analysis_saved = save_filename
+
+        self.save_fig(save_filename)
         self.save_filename = save_filename
 
     def save_fig(self, save_filename):
@@ -158,6 +171,10 @@ class Main(QMainWindow):
         if self.result_dict is None:
             print('No result to log.')
             return
+
+        if self.save_filename is None:
+            self.saveAnalysis()
+
         comment = 'File: %s\nAnalyzed File: %s\n\n' % (self.filename, self.save_filename)
         comment += parameters_to_text(self.result_dict['input_parameters'])
         with open(self.fig_savename, 'rb') as f:
@@ -204,10 +221,18 @@ class Main(QMainWindow):
         self.do_daq('psss', channels)
 
     def daq_maloja(self):
-        pass
+        channels = [
+            'SATOP21-PMOS127-2D:SPECTRUM_X',
+            'SATOP21-PMOS127-2D:SPECTRUM_Y',
+            ]
+        self.do_daq('pmos_maloja', channels)
 
     def daq_furka(self):
-        pass
+        channels = [
+            'SATOP31-PMOS132-2D:SPECTRUM_X',
+            'SATOP31-PMOS132-2D:SPECTRUM_Y',
+            ]
+        self.do_daq('pmos_furka', channels)
 
     def do_daq(self, prefix, channels):
         filename = self.get_daq_filename(prefix)
