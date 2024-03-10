@@ -348,6 +348,7 @@ class SpectrumDataset:
         if not self.expool:
             self.pool.close()
             self.pool.join()
+            self.pool.terminate()
         count1 = 0
         self.number_of_peaks = np.zeros(self.spectrum_number)
         self.FWHM = self.number_of_peaks.copy()
