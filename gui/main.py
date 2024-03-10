@@ -84,6 +84,7 @@ class Main(QMainWindow):
         self.ui.SelectFile.clicked.connect(self.select_file(self.ui.Filename))
         self.ui.DoAnalysis.clicked.connect(self.do_analysis)
         self.ui.DoLogbook.clicked.connect(self.do_logbook)
+        self.ui.CloseAll.clicked.connect(self.close_all)
         for button, func in [
                 (self.ui.DAQ_PSSS, self.daq_psss),
                 (self.ui.DAQ_Maloja, self.daq_maloja),
@@ -122,6 +123,11 @@ class Main(QMainWindow):
         self.ui.Filename.setText(default_filename)
         self.ui.FilenameLabel.setText(filename_label)
 
+    def close_all(self):
+        for num in plt.get_fignums():
+            plt.figure(num).clf()
+        plt.close('all')
+
     def do_analysis(self):
         self.result_dict = self.fig_savename = self.save_filename = None
 
@@ -135,11 +141,14 @@ class Main(QMainWindow):
         _, result_dict = spectrum.analyze_spectrum(filename, parameters)
         time1 = time.time()
         print('End analysis after %.0f s' % (time1-time0))
-        self.result_dict = result_dict
-        self.fig = self.do_plot(self.result_dict, self.filename)
+        if result_dict is None:
+            print('Analysis of results failed')
+        else:
+            self.result_dict = result_dict
+            self.fig = self.do_plot(self.result_dict, self.filename)
 
-        if self.ui.AlwaysSave.isChecked():
-            self.saveAnalysis()
+            if self.ui.AlwaysSave.isChecked():
+                self.saveAnalysis()
 
     def saveAnalysis(self):
         if args.facility == 'XFEL':

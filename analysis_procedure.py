@@ -138,3 +138,4 @@ class AnalysisProcedure():
         figures = self.dataset.get_figure_list()
         self.dataset = None
         return figures
+

@@ -199,7 +199,7 @@
      </rect>
     </property>
     <property name="text">
-     <string>For lowpass filter. Unknown interpretation</string>
+     <string>For lowpass filter. Lower means more smoothing.</string>
     </property>
    </widget>
    <widget class="QDoubleSpinBox" name="ParFitHeight">
@@ -373,7 +373,7 @@
    <widget class="QPushButton" name="DoAnalysis">
     <property name="geometry">
      <rect>
-      <x>610</x>
+      <x>487</x>
       <y>420</y>
       <width>81</width>
       <height>23</height>
@@ -441,7 +441,7 @@
    <widget class="QPushButton" name="SelectFile">
     <property name="geometry">
      <rect>
-      <x>510</x>
+      <x>387</x>
       <y>420</y>
       <width>81</width>
       <height>23</height>
@@ -454,7 +454,7 @@
    <widget class="QPushButton" name="DoLogbook">
     <property name="geometry">
      <rect>
-      <x>710</x>
+      <x>587</x>
       <y>420</y>
       <width>81</width>
       <height>23</height>
@@ -593,7 +593,7 @@
    <widget class="QSpinBox" name="NumExampleSpectra">
     <property name="geometry">
      <rect>
-      <x>440</x>
+      <x>317</x>
       <y>420</y>
       <width>51</width>
       <height>26</height>
@@ -612,7 +612,7 @@
    <widget class="QLabel" name="label_11">
     <property name="geometry">
      <rect>
-      <x>303</x>
+      <x>180</x>
       <y>420</y>
       <width>131</width>
       <height>21</height>
@@ -675,6 +675,19 @@
     </property>
     <property name="checked">
      <bool>false</bool>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="CloseAll">
+    <property name="geometry">
+     <rect>
+      <x>690</x>
+      <y>420</y>
+      <width>101</width>
+      <height>23</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Close all plots</string>
     </property>
    </widget>
   </widget>

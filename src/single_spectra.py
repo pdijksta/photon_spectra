@@ -13,7 +13,8 @@ from matplotlib.figure import Figure
 class single_spectra:
     def __init__(self, intensity, photE, fact, i):
         self.spectrum_label = i
-        self.intensity = intensity
+        self.raw_intensity = intensity
+        self.intensity = np.clip(intensity - np.quantile(intensity, 0.1), 0, None)
         self.indivtime = zeros(4)
         self.photE = photE
         self.fact = fact

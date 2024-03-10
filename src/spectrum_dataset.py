@@ -87,7 +87,7 @@ class SpectrumDataset:
 
             except Exception as e:
                 print(e)
-                self.send_message('Wrong file format', f'The file {os.path.basename(self.datasetname)} could not be opened as an h5 file.')
+                self.send_message('Wrong file format', f'The file {self.datasetname} could not be opened as an h5 file.')
                 return False
         _, indices = np.unique(self.intense, axis=0, return_index=True)
         self.intense = self.intense[np.sort(indices)]
@@ -101,14 +101,26 @@ class SpectrumDataset:
         return True
 
     def open_dataset2(self, f, photEcutoff):
-
-        if 'y-axis' in f.keys() and 'x-axis' in f.keys():
+        keys = list(f.keys())
+        if 'y-axis' in keys and 'x-axis' in keys:
             self.intense = f['y-axis']
-            self.photE = np.array(f["x-axis"])
-        elif 'SARFE10-PSSS059:SPECTRUM_X' in f.keys() and 'SARFE10-PSSS059:SPECTRUM_Y' in f.keys():
-            self.photE = np.array(f['SARFE10-PSSS059:SPECTRUM_X']['data'][0], np.float64)
-            self.intense = np.array(f['SARFE10-PSSS059:SPECTRUM_Y']['data'], np.float64)
-        elif 'scan 1/data/SARFE10-PSSS059/SPECTRUM_Y' in f and 'scan 1/data/SARFE10-PSSS059/SPECTRUM_X' in f:
+            self.photE = np.array(f['x-axis'])
+            return True
+
+        success1, success2 = True, True
+        for key in keys:
+            if key.endswith('SPECTRUM_X'):
+                photE = np.array(f[key]['data'][0], np.float64)
+                success1 = True
+            elif key.endswith('SPECTRUM_Y'):
+                intense = np.array(f[key]['data'], np.float64)
+                success2 = True
+        if success1 and success2:
+            self.photE = photE
+            self.intense = intense
+            return True
+
+        if 'scan 1/data/SARFE10-PSSS059/SPECTRUM_Y' in f and 'scan 1/data/SARFE10-PSSS059/SPECTRUM_X' in f:
             #self.photE = np.array(f['scan 1/data/SARFE10-PSSS059/SPECTRUM_X'][0, 0,:2560])
             #self.intense = f['scan 1/data/SARFE10-PSSS059/SPECTRUM_Y'][:,0,:2560]
 
@@ -120,19 +132,19 @@ class SpectrumDataset:
             mask0 = xx1[0] != 0
             self.photE = xx1[:,mask0][0]
             self.intense = yy1[:,mask0]
+            return True
 
-        elif 'energy' in self.f.keys() and 'powerE' in self.f.keys():
+        if 'energy' in keys and 'powerE' in keys:
             if photEcutoff is not None:
-                self.photE = np.array(self.f['energy'][0][photEcutoff:-photEcutoff])
-                self.intense = self.f['powerE'][:,photEcutoff:-photEcutoff]
-            else:
-                self.photE = np.array(self.f['energy'][0])
-                self.intense = self.f['powerE']
-        else:
-            self.send_message('Could not find data','''No photon spectra data could be found in the opened h5 file. We were looking for data under the following keys <ol> <li> x-axis, y-axis </li> <li> SARFE10-PSSS059:SPECTRUM_X, SARFE10-PSSS059:SPECTRUM_Y </li><li>scan 1/data/SARFE10-PSSS059/SPECTRUM_X, scan 1/data/SARFE10-PSSS059/SPECTRUM_Y</li> </ol>''')
+                self.photE = np.array(f['energy'][0][photEcutoff:-photEcutoff])
+                self.intense = f['powerE'][:,photEcutoff:-photEcutoff]
+                return True
+            self.photE = np.array(f['energy'][0])
+            self.intense = f['powerE']
+            return True
+        self.send_message('Could not find data','''No photon spectra data could be found in the opened h5 file. We were looking for data under the following keys <ol> <li> x-axis, y-axis </li> <li> SARFE10-PSSS059:SPECTRUM_X, SARFE10-PSSS059:SPECTRUM_Y </li><li>scan 1/data/SARFE10-PSSS059/SPECTRUM_X, scan 1/data/SARFE10-PSSS059/SPECTRUM_Y</li> </ol>''')
 
-            return False
-        return True
+        return False
 
     def get_general_information(self):
 
@@ -205,8 +217,8 @@ class SpectrumDataset:
     def analyse_serial(self):
         #initialize rawdata containers
         self.number_of_peaks = np.zeros(self.spectrum_number)
-        self.FWHM = np.zeros(self.spectrum_number)
-        self.tmin = np.zeros(self.spectrum_number)
+        self.FWHM = self.number_of_peaks.copy()
+        self.tmin = self.number_of_peaks.copy()
         self.fit_functions = np.zeros([self.spectrum_number, len(self.photE)])
         self.filtered_spectra = self.fit_functions.copy()
         self.examples = []
@@ -269,7 +281,7 @@ class SpectrumDataset:
                         self.FWHM[i] = spectra.FWHM
                         self.tmin[i] = spectra.tmin
                         self.fit_functions[i] = spectra.total_fit
-                        self.filtered_spectra[i] = spectra.shiftraw
+                        self.filtered_spectra[i] = spectra.spec
 
                         if count1 <= 1:
                             self.examples.append(spectra.shiftraw)
@@ -337,8 +349,8 @@ class SpectrumDataset:
             self.pool.close()
         count1 = 0
         self.number_of_peaks = np.zeros(self.spectrum_number)
-        self.FWHM = np.zeros(self.spectrum_number)
-        self.tmin = np.zeros(self.spectrum_number)
+        self.FWHM = self.number_of_peaks.copy()
+        self.tmin = self.number_of_peaks.copy()
         self.fit_functions = np.zeros([self.spectrum_number, len(self.photE)])
         self.filtered_spectra = self.fit_functions.copy()
 

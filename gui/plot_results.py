@@ -60,7 +60,7 @@ def standard_plot(filename, result, figsize=(12,10), xlims=None, max_eV=5, n_exa
     n_example_spectra = min(n_example_spectra, len(n_spikes))
     for n_spectrum in range(7):
         sp = sps[n_spectrum+2]
-        plot_example_spectrum(sp, result, n_spectrum, data_max, filtered_max, avg, n_spikes)
+        plot_example_spectrum(sp, result, n_spectrum, data_min, data_max, filtered_max, avg, n_spikes)
     sps[2].get_shared_x_axes().join(*sps[2:])
     sps[2].legend()
     if xlims is not None:
@@ -79,16 +79,19 @@ def standard_plot(filename, result, figsize=(12,10), xlims=None, max_eV=5, n_exa
         plt.suptitle('Example spectra %i for %s' % (n_fig, os.path.basename(filename)))
         for n_sp, sp in enumerate(sps):
             n_spectrum += 1
-            plot_example_spectrum(sp, result, n_spectrum, data_max, filtered_max, avg, n_spikes)
+            plot_example_spectrum(sp, result, n_spectrum, data_min, data_max, filtered_max, avg, n_spikes)
 
     return figs, sps
 
-def plot_example_spectrum(sp, result, n_spectrum, data_max, filtered_max, avg, n_spikes):
+def plot_example_spectrum(sp, result, n_spectrum, data_min, data_max, filtered_max, avg, n_spikes):
+    if n_spectrum > len(n_spikes) - 1:
+        return
+
     sp.set_title('Spectrum %i with %i spikes' % (n_spectrum, n_spikes[n_spectrum]))
     sp.set_xlabel('E (eV)')
     sp.set_ylabel('Intensity (arb. units)')
 
-    _yy = result['raw_data_intensity'][n_spectrum]
+    _yy = result['raw_data_intensity'][n_spectrum] - data_min
     _yy_filtered = result['filtered_spectra'][n_spectrum]
     _yy_fit = result['fit_functions'][n_spectrum]
     ene = result['raw_data_energy']
