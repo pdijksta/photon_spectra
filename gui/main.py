@@ -87,6 +87,7 @@ class Main(QMainWindow):
         self.ui.CloseAll.clicked.connect(self.close_all)
         for button, func in [
                 (self.ui.DAQ_PSSS, self.daq_psss),
+                (self.ui.DAQ_PSSS_LB, self.daq_psss_lb),
                 (self.ui.DAQ_Maloja, self.daq_maloja),
                 (self.ui.DAQ_Furka, self.daq_furka),
                 ]:
@@ -228,6 +229,14 @@ class Main(QMainWindow):
             'SARFE10-PSSS059:SPECTRUM_Y',
             ]
         self.do_daq('psss', channels)
+
+    def daq_psss_lb(self):
+        channels = [
+            'SARFE10-PSSS059-LB:SPECTRUM_X',
+            'SARFE10-PSSS059-LB:SPECTRUM_Y',
+            ]
+        self.do_daq('psss_lb', channels)
+
 
     def daq_maloja(self):
         channels = [

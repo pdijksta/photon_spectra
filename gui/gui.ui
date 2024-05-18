@@ -519,7 +519,7 @@
    <widget class="QPushButton" name="DAQ_Maloja">
     <property name="geometry">
      <rect>
-      <x>170</x>
+      <x>260</x>
       <y>550</y>
       <width>81</width>
       <height>21</height>
@@ -532,7 +532,7 @@
    <widget class="QPushButton" name="DAQ_Furka">
     <property name="geometry">
      <rect>
-      <x>280</x>
+      <x>360</x>
       <y>550</y>
       <width>81</width>
       <height>21</height>
@@ -688,6 +688,19 @@
     </property>
     <property name="text">
      <string>Close all plots</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="DAQ_PSSS_LB">
+    <property name="geometry">
+     <rect>
+      <x>160</x>
+      <y>550</y>
+      <width>81</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>PSSS LB</string>
     </property>
    </widget>
   </widget>
