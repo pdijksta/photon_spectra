@@ -227,6 +227,10 @@ class Main(QMainWindow):
         channels = [
             'SARFE10-PSSS059:SPECTRUM_X',
             'SARFE10-PSSS059:SPECTRUM_Y',
+            'SARFE10-PBPG050:HAMP-INTENSITY-CAL',
+            'SARFE10-PBIG050-EVR0:CALCI',
+            'SARFE10-PBPS053:INTENSITY',
+            'SARFE10-PBPS053:INTENSITY_UJ',
             ]
         self.do_daq('psss', channels)
 
@@ -234,14 +238,19 @@ class Main(QMainWindow):
         channels = [
             'SARFE10-PSSS059-LB:SPECTRUM_X',
             'SARFE10-PSSS059-LB:SPECTRUM_Y',
+            'SARFE10-PBPG050:HAMP-INTENSITY-CAL',
+            'SARFE10-PBIG050-EVR0:CALCI',
+            'SARFE10-PBPS053:INTENSITY',
+            'SARFE10-PBPS053:INTENSITY_UJ',
             ]
         self.do_daq('psss_lb', channels)
-
 
     def daq_maloja(self):
         channels = [
             'SATOP21-PMOS127-2D:SPECTRUM_X',
             'SATOP21-PMOS127-2D:SPECTRUM_Y',
+            'SATFE10-PEPG046:FCUP-INTENSITY-CAL',
+            'SATFE10-PEPG046-EVR0:CALCI',
             ]
         self.do_daq('pmos_maloja', channels)
 
@@ -249,6 +258,8 @@ class Main(QMainWindow):
         channels = [
             'SATOP31-PMOS132-2D:SPECTRUM_X',
             'SATOP31-PMOS132-2D:SPECTRUM_Y',
+            'SATFE10-PEPG046:FCUP-INTENSITY-CAL',
+            'SATFE10-PEPG046-EVR0:CALCI',
             ]
         self.do_daq('pmos_furka', channels)
 
