@@ -88,6 +88,7 @@ class SpectrumDataset:
             except Exception as e:
                 print(e)
                 self.send_message('Wrong file format', f'The file {self.datasetname} could not be opened as an h5 file.')
+                raise
                 return False
         _, indices = np.unique(self.intense, axis=0, return_index=True)
         self.intense = self.intense[np.sort(indices)]
@@ -107,7 +108,7 @@ class SpectrumDataset:
             self.photE = np.array(f['x-axis'])
             return True
 
-        success1, success2 = True, True
+        success1, success2 = False, False
         for key in keys:
             if key.endswith('SPECTRUM_X'):
                 photE = np.array(f[key]['data'][0], np.float64)
@@ -132,6 +133,21 @@ class SpectrumDataset:
             mask0 = xx1[0] != 0
             self.photE = xx1[:,mask0][0]
             self.intense = yy1[:,mask0]
+            return True
+
+        if 'scan_1/data/SATOP31-PMOS132-2D/SPECTRUM_Y' in f and 'scan_1/data/SATOP31-PMOS132-2D/SPECTRUM_X' in f:
+            #self.photE = np.array(f['scan 1/data/SARFE10-PSSS059/SPECTRUM_X'][0, 0,:2560])
+            #self.intense = f['scan 1/data/SARFE10-PSSS059/SPECTRUM_Y'][:,0,:2560]
+
+            xx = np.array(f['scan_1/data/SATOP31-PMOS132-2D/SPECTRUM_X'])
+            yy = np.array(f['scan_1/data/SATOP31-PMOS132-2D/SPECTRUM_Y'])
+            shape_x = xx.shape
+            shape_y = yy.shape
+            print('x', shape_x)
+            print('y', shape_y)
+            mask0 = xx != 0
+            self.photE = xx[mask0]
+            self.intense = yy[:,mask0]
             return True
 
         if 'energy' in keys and 'powerE' in keys:
