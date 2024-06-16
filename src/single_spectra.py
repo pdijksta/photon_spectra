@@ -346,3 +346,4 @@ class single_spectra:
         fig.set_tight_layout(True)
 
         return fig
+

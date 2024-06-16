@@ -1,4 +1,3 @@
-import time
 from .single_spectra import single_spectra
 from numpy import array
 
@@ -12,7 +11,6 @@ def analyse_single_spectra(i, params, intense, photE, fact):
         spectra.finding_peak(params['prominence'], params['height'], params['background_prominence'])
         if spectra.n > 0:
             spectra.first_estimate(params['cutoff_prominence'], params['cutoff_height'], globalminima=False)
-    
     return spectra
 
 def feedback(i, params, intense, photE, fact):
