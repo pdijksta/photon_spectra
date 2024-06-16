@@ -2,7 +2,7 @@ import os
 import numpy as np
 import matplotlib.pyplot as plt
 
-def standard_plot(filename, result, figsize=(12,10), xlims=None, max_eV=5, n_example_spectra=7):
+def standard_plot(filename, result, figsize=(12,10), xlims=None, max_eV=5, n_example_spectra=7, norm_plot=True, remove_min_plot=True):
     fig, sps = plt.subplots(nrows=3, ncols=3, figsize=figsize)
     figs = [fig]
     fig.subplots_adjust(hspace=0.5, wspace=0.5)
@@ -60,7 +60,7 @@ def standard_plot(filename, result, figsize=(12,10), xlims=None, max_eV=5, n_exa
     n_example_spectra = min(n_example_spectra, len(n_spikes))
     for n_spectrum in range(7):
         sp = sps[n_spectrum+2]
-        plot_example_spectrum(sp, result, n_spectrum, data_min, data_max, filtered_max, avg, n_spikes)
+        plot_example_spectrum(sp, result, n_spectrum, data_min, data_max, filtered_max, avg, n_spikes, norm_plot, remove_min_plot)
     sps[2].get_shared_x_axes().join(*sps[2:])
     sps[2].legend()
     if xlims is not None:
@@ -79,11 +79,11 @@ def standard_plot(filename, result, figsize=(12,10), xlims=None, max_eV=5, n_exa
         plt.suptitle('Example spectra %i for %s' % (n_fig, os.path.basename(filename)))
         for n_sp, sp in enumerate(sps):
             n_spectrum += 1
-            plot_example_spectrum(sp, result, n_spectrum, data_min, data_max, filtered_max, avg, n_spikes)
+            plot_example_spectrum(sp, result, n_spectrum, data_min, data_max, filtered_max, avg, n_spikes, norm_plot, remove_min_plot)
 
     return figs, sps
 
-def plot_example_spectrum(sp, result, n_spectrum, data_min, data_max, filtered_max, avg, n_spikes):
+def plot_example_spectrum(sp, result, n_spectrum, data_min, data_max, filtered_max, avg, n_spikes, normalized, remove_min):
     if n_spectrum > len(n_spikes) - 1:
         return
 
@@ -91,19 +91,31 @@ def plot_example_spectrum(sp, result, n_spectrum, data_min, data_max, filtered_m
     sp.set_xlabel('E (eV)')
     sp.set_ylabel('Intensity (arb. units)')
 
-    _yy = result['raw_data_intensity'][n_spectrum] - data_min
+    _yy = result['raw_data_intensity'][n_spectrum]
+    if remove_min:
+        _yy = _yy - data_min
     _yy_filtered = result['filtered_spectra'][n_spectrum]
     _yy_fit = result['fit_functions'][n_spectrum]
     ene = result['raw_data_energy']
 
-    sp.plot(ene, _yy/data_max, label='Data')
-    filter_plot = _yy_filtered/filtered_max
+    if normalized:
+        _yy_plot = _yy/data_max
+    else:
+        _yy_plot = _yy
+    sp.plot(ene, _yy_plot, label='Data')
+
+    if normalized:
+        norm = filtered_max
+    else:
+        norm = 1
+
+    filter_plot = _yy_filtered/norm
     sp.plot(ene, filter_plot, label='Filtered')
     _max = _yy_fit.max()
-    if _max != 0:
-        fit_plot = _yy_fit / _yy_fit.max()*filter_plot.max()
+    if _max != 0 and normalized:
+        fit_plot = _yy_fit / _max*filter_plot.max()
     else:
         fit_plot = _yy_fit
     sp.plot(ene, fit_plot, label='Fit')
-    sp.plot(ene, avg/filtered_max, label='Avg', color='black', ls='--')
+    sp.plot(ene, avg/norm, label='Avg', color='black', ls='--')
 
